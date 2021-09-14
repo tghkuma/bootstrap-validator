@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja_JP">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="utf-8">
+  <title>2フォーム(一括)</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+<script src="../js/jquery.btfw.form_validate.js"></script>
+<script>
+  $(function() {
+    $("form[name=form]").formValidate({ fields:[
+        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
+        { name:'birthday', d_name:'日付', rules:['date']}
+      ]});
+  });
+</script>
+<div class="container">
+  <div class="content">
+    <h1>2フォーム(一括)</h1>
+    <h2>フォーム1</h2>
+    <form name="form" action="#" method="post">
+      <fieldset>
+        <div class="form-group row">
+          <label class="col-form-label col-sm-4" for="id-name">名前</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="id-name" name="name" size="64" maxlength="64" placeholder="必須項目/全角">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-form-label col-sm-4" for="id-birthday">誕生日</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="id-birthday" name="birthday" value="エラー値">
+          </div>
+        </div>
+      </fieldset>
+      <!--// jscpd:ignore-start -->
+      <div class="form-actions" style="text-align: center">
+        <input type="submit" class="btn btn-primary" value="登録">
+      </div>
+      <!--// jscpd:ignore-end -->
+    </form>¬
+    <h2>フォーム2</h2>
+    <form name="form" action="#" method="post">
+      <fieldset>
+        <div class="form-group row">
+          <label class="col-form-label col-sm-4" for="id-name2">名前</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="id-name2" name="name" size="64" maxlength="64" placeholder="必須項目/全角">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-form-label col-sm-4" for="id-birthday2">誕生日</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="id-birthday2" name="birthday" value="エラー値">
+          </div>
+        </div>
+      </fieldset>
+      <!--// jscpd:ignore-start -->
+      <div class="form-actions" style="text-align: center">
+        <input type="submit" class="btn btn-primary" value="登録">
+      </div>
+      <!--// jscpd:ignore-end -->
+    </form>
+    <a href="index.html">一覧へ</a>
+
+    <!-- /.content --></div>
+  <!-- /.container --></div>
+</body>
+</html>

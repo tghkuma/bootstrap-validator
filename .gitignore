@@ -1,0 +1,11 @@
+# 無視ファイルリスト
+.idea/
+*.iml
+.sass-cache/
+
+*.bak
+*.BAK
+.DS_Store
+Thumbs.db
+/node_modules/
+/jsdoc/

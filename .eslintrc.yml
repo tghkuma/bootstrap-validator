@@ -1,0 +1,39 @@
+#############################
+#############################
+## JavaScript Linter rules ##
+#############################
+#############################
+
+############
+# Env Vars #
+############
+env:
+  browser: true
+  es6: true
+  jest: true
+  jquery: true
+
+###############
+# Global Vars #
+###############
+globals:
+  Atomics: readonly
+  SharedArrayBuffer: readonly
+
+###############
+# Parser vars #
+###############
+parserOptions:
+  ecmaVersion: 2018
+  sourceType: module
+
+#########
+# Rules #
+#########
+extends: 'eslint:recommended'
+rules:
+  indent:
+    - error
+    - 2
+    - SwitchCase: 1
+  semi: error

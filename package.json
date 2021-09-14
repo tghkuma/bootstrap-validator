@@ -1,0 +1,34 @@
+{
+  "name": "jquery.form_validate_btfw",
+  "version": "1.8.1",
+  "description": "Bootstrap形式のフォーム値のValidateを行う。",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "jsdoc": "^3.6.7",
+    "standard": "^16.0.3",
+    "webpack": "^5.52.1",
+    "webpack-cli": "^4.8.0"
+  },
+  "scripts": {
+    "test": "eslint js/*.js",
+    "jsdoc": "jsdoc js/ -d jsdoc/",
+    "compress": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode=\"production\" --devtool source-map",
+    "standard": "standard ./js/bootstrap-validator.js",
+    "standard:fix": "standard --fix ./js/bootstrap-validator.js",
+    "super-lint": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tghkuma/jquery.form_validate_btfw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tghkuma/jquery.form_validate_btfw/issues"
+  },
+  "homepage": "https://github.com/tghkuma/jquery.form_validate_btfw#readme"
+}
