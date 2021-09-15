@@ -1,9 +1,9 @@
-# JQuery Form Validate(Bootstrap4/Bootstrap3/TwitterBootstrap2.x)
+# bootstrap-validator(Bootstrap5/Bootstrap4)
 
-[![GitHub Super-Linter](https://github.com/tghkuma/jquery.form_validate_btfw/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![GitHub Super-Linter](https://github.com/tghkuma/bootstrap-validator/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
-## 解説
-このプログラムは、Bootstrap形式のフォーム値のValidateを行う。
+このプログラムは、Bootstrap形式のフォーム値のValidateを行う。  
+JQueryは利用しない。
 
 ## 書式
 
@@ -11,19 +11,21 @@ Validate定義
 Submit時にValidateを行う場合。
 
 ```javascript
-$("フォーム").formValidate({ <オプション>,fields:[
- { name:'<フィールド名1>'[, d_name:'<フィールド表示名1>'][, rules:<ルール or ルール配列>]},
+const form = document.querySelector(<form selector>)
+new BootstrapValidator(form, { <オプション>,fields:[
+ { name: '<フィールド名1>'[, label: '<フィールド表示名1>'][, rules: <ルール or ルール配列>]},
                     :
- { name:'<フィールド名n>', d_name:'<フィールド表示名n>', rules:<ルール or ルール配列>}
-]});
+ { name:'<フィールド名n>', label: '<フィールド表示名n>', rules: <ルール or ルール配列>}
+]})
 ```
 
 別のタイミングでValidateを行う場合。
 
 ```javascript
-$("フォーム").formValidate({ submit:null,fields:<フィールド定義配列>});
-                    :
-$("フォーム").formValidate('validate');
+const form = document.querySelector(<form selector>);
+valitetor = new BootstrapValidator(form, { submit:null,fields:<フィールド定義配列>})
+            :
+valitetor.validate()
 ```
 
 ### オプション
@@ -107,21 +109,21 @@ Alert,独自エラー表示では対応可能。
 #### 配列版
 その1
 ```plaintext
-[<ルール名>,<パラメータ1>,<パラメータ2>...,<パラメータn>]
+[<ルール名>, <パラメータ1>, <パラメータ2>..., <パラメータn>]
 ```
 その2
 ```plaintext
-[<ルール名>,[<パラメータ1>,<パラメータ2>...,<パラメータn>]]
+[<ルール名>,[ <パラメータ1>, <パラメータ2>..., <パラメータn>]]
 ```
 
 #### Object版
 ```plaintext
-{rule:<ルール名>,params:[<パラメータ1>,<パラメータ2>...,<パラメータn>}
+{rule: <ルール名>, params: [<パラメータ1>, <パラメータ2>..., <パラメータn>}
 ```
 
 #### 文字列版
 ```plaintext
-<ルール名>:<パラメータ1>[,<パラメータ2>[...,<パラメータn>]
+<ルール名>: <パラメータ1>[, <パラメータ2>[..., <パラメータn>]
 ```
 
 但し、正規表現の様にパラメータ中に「,」が必要な場合は、パラメータをJSON形式に変換して定義する。
@@ -162,19 +164,19 @@ getValidateResultメソッドの戻り値はエラーメッセージは下記構
 
 ```javascript
 [
- { name:'<フィールド名1>', d_name:'<フィールド表示名1>', message:'<エラーメッセージ>'},
+ { name:  '<フィールド名1>', label: '<フィールド表示名1>', message:'<エラーメッセージ>'},
                     :
- { name:'<フィールド名n>', d_name:'<フィールド表示名n>', message:'<エラーメッセージ>'}
-];
+ { name:  '<フィールド名n>', label: '<フィールド表示名n>', message:'<エラーメッセージ>'}
+]
 ```
 1フィールドに複数ルールが定義されている等、複数のエラーが出た場合は同じフィールド名で複数のエラーメッセージを返す。
 
 ```javascript
 [
- { name:'NAME_KANA', d_name:'名前(かな)', message:'全角ひらがなで入力してください.'},
- { name:'NAME_KANA', d_name:'名前(かな)', message:'20文字以下で入力して下さい.'},
+ { name:  'NAME_KANA', label: '名前(かな)', message:'全角ひらがなで入力してください.'},
+ { name:  'NAME_KANA', label: '名前(かな)', message:'20文字以下で入力して下さい.'},
                     :
-];
+]
 ```
 
 ## HTML5バリデーション準拠
@@ -229,12 +231,14 @@ Alert,独自エラー表示では対応可能。
 
 ## build(minify)手順
 
-「[compress.sh](compress.sh)」を参照
+```shell
+npm run compress
+```
 
 ### CDN
 
-`https://cdn.jsdelivr.net/gh/tghkuma/jquery.form_validate_btfw@1.8.x/js/jquery.btfw.form_validate.min.js`
+`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.1/js/bootstrap-validator.min.js`
 
 ## Copyright
 
-Copyright &copy; 2014-2020 [Team-Grasshopper Co., Ltd.](https://team-grasshopper.info/)
+Copyright &copy; 2021 [Team-Grasshopper Co., Ltd.](https://team-grasshopper.info/)
