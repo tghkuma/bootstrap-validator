@@ -36,10 +36,10 @@ submit |"validate" | Submit時に行う処理、メソッド文字列 or 関数 
 confirm_suffix|"\_confirm" | confirmルールの確認フィールドの接尾語
 zip_suffix | "\_after" |zip_exルールの4桁フィールドの接尾語
 fields | null |各種フィールド定義配列
-errorType| null | "bs3"=Bootstrap3形式でエラーを表示<br>"tb2"=TwitterBootstrap2形式でエラーを表示
+errorType| null | "bs4"=Bootstrap4形式でエラーを表示
 clearError | null | エラークリア関数を指定
 setError| null | エラー設定関数を指定
-focusError | true | true=エラー時に最初のエラーにフォーカスする<br>メソッド:validate, validate_alertで利用
+focusError | true | true=エラー時に最初のエラーにフォーカスする<br>メソッド:validate, validateAlertで利用
 focusErrorSpeed | "fast" | フォーカスのスクロール<br>(JQuery animateのduration. "slow","normal","fast"またはミリ秒)<br>JQuery slim版ではanimateは未サポート
 
 ### フィールド定義
@@ -47,7 +47,7 @@ focusErrorSpeed | "fast" | フォーカスのスクロール<br>(JQuery animate�
 属性名 | 機能
 --- | ---
 name | フィールド名.<br>input,textarea,select等のnameを指定
-d_name | 表示名.通常は未使用でvalidate_alertメソッドのalert表示で使用される
+label | 表示名.通常は未使用でvalidateAlertメソッドのalert表示で使用される
 rules | Validateルール.<br>1件の場合はルール文字列.複数の場合は配列で定義する
 
 ### メソッド
@@ -66,7 +66,7 @@ focusError|name| nameフィールドにフォーカス
 clearError|name| nameフィールドのエラークリア.未指定時全てクリア
 setError|name, message| nameフィールドにmessageエラーを表示
 validate|[オプションオブジェクト]| パラメータチェック<br>戻り値:true=正常, false=エラー
-validate_alert|[オプションオブジェクト]| パラメータチェック<br>エラー時alert()でエラー表示
+validateAlert|[オプションオブジェクト]| パラメータチェック<br>エラー時alert()でエラー表示
 getValidateResult|[オプションオブジェクト]|パラメータチェック結果取得<br>戻り値:エラーメッセージ配列
 getFieldsRules|[オプションオブジェクト]|フォーム内フィールドからfieldsとrulesを生成|
 

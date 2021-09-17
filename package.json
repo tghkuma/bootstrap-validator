@@ -16,7 +16,8 @@
   "scripts": {
     "test": "eslint js/*.js",
     "jsdoc": "jsdoc js/ -d jsdoc/",
-    "compress": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode=\"production\" --devtool source-map",
+    "compress": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode production --devtool source-map --target web",
+    "compress2": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode development --devtool source-map --target web",
     "standard": "standard ./js/bootstrap-validator.js",
     "standard:fix": "standard --fix ./js/bootstrap-validator.js",
     "super-lint": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
