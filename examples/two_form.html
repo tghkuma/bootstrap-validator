@@ -14,8 +14,8 @@
 <script>
   $(function() {
     $("form[name=form]").formValidate({ fields:[
-        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
-        { name:'birthday', d_name:'日付', rules:['date']}
+        { name:'name', label:'名前', rules:['required', 'zenkaku']},
+        { name:'birthday', label:'日付', rules:['date']}
       ]});
   });
 </script>

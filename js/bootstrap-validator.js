@@ -11,10 +11,10 @@ export class BootstrapValidator {
     if (options && options.fields) {
       this.fields = options.fields
     }
+
     /** 初期設定情報 */
     this._settings = {
       submit: 'validate',
-      fields: null,
       confirm_suffix: '_confirm',
       zip_suffix: '_after',
       ymd_suffix_y: '_y',
@@ -26,14 +26,65 @@ export class BootstrapValidator {
       /** メッセージ */
       messages: MESSAGES
     }
-    this._helpers = BootstrapValidatorHelpers
+
+    // 設定上書き
+    for (const paramName in this._settings) {
+      if (options[paramName]) {
+        if (typeof options[paramName] === 'object') {
+          this._settings[paramName] = Object.assign(this._settings[paramName], options[paramName])
+        } else {
+          this._settings[paramName] = options[paramName]
+        }
+      }
+    }
+
+    this.helpers = BootstrapValidatorHelpers
     this._validFunc = BootstrapValidatorValidFunc
     this._validExistsFunc = BootstrapValidatorValidExistsFunc
+
+    // submitイベント登録
+    this.form.addEventListener('submit', (event) => this.onSubmit(event))
+  }
+
+  onSubmit (event) {
+    let ret
+    if (this.settings.submit) {
+      this.clearError()
+      if (typeof this.settings.submit === 'string' && typeof this[this.settings.submit] === 'function') {
+        ret = this[this.settings.submit]()
+      } else if (typeof this.settings.submit === 'function') {
+        ret = this.settings.submit()
+      }
+      if (!ret) {
+        // event.stopPropagation()
+        event.preventDefault()
+      }
+    }
+  }
+
+  /**
+   * form取得
+   * @return {HTMLFormElement} 設定データ
+   */
+  get form () {
+    return this._form
+  }
+
+  /**
+   * form設定
+   * @param {string|HTMLFormElement} selectors 設定データ
+   */
+  set form (selectors) {
+    if (typeof selectors === 'string') {
+      this._form = document.querySelector(selectors)
+    } else {
+      this._form = selectors
+    }
   }
 
   /**
    * 設定データ取得
-   * @return {settings} 設定データ
+   * @return {_settings} 設定データ
    */
   get settings () {
     return this._settings
@@ -42,7 +93,7 @@ export class BootstrapValidator {
   /**
    * 設定データ更新
    * 既存の設定とマージする
-   * @param {settings} settings 設定データ
+   * @param {_settings} settings 設定データ
    */
   set settings (settings) {
     this._settings = Object.assign(this._settings, settings)
@@ -68,7 +119,7 @@ export class BootstrapValidator {
    */
   displayError (arrErrors) {
     arrErrors.forEach(error => {
-      this.setError(error.name, error.messages)
+      this.setError(error.name, error.message)
     })
     if (arrErrors.length > 0) {
       // 最初のエラーにフォーカス
@@ -85,49 +136,7 @@ export class BootstrapValidator {
     if (fields && fields.length > 0) {
       fields[0].focus()
     } else {
-      console.warn(this._helpers.format(this.settings.messages.NOT_EXISTS_FIELD, name))
-    }
-  }
-
-  /**
-   * 指定箇所エラー表示処理
-   * @param {string} name 項目名
-   * @param {string} messages エラー文言
-   */
-  setError (name, messages) {
-    if (typeof this.settings.setError === 'function') {
-      this.settings.setError.apply(this, [name, messages])
-      // } else if (this.settings.errorType === 'bs5') {
-      //   this.setErrorBootstrap5.apply(this, [name, messages]);
-    } else {
-      this.setErrorBootstrap(name, messages)
-    }
-  }
-
-  /**
-   * 指定箇所エラー表示処理
-   * (Bootstrap5レイアウト)
-   * @param {string} name 項目名
-   * @param {string} messages エラー文言
-   */
-  setErrorBootstrap (name, messages) {
-    const errDiv = document.createElement('div')
-    errDiv.innerHTML = '<div class="invalid-feedback">' + messages + '</div>'
-    const nodeList = this.querySelectorAllByName(name)
-    const field = nodeList[0]
-    const type = field.attributes.type ? field.attributes.type.value : null
-    if (['radio', 'checkbox'].indexOf(type) !== -1) {
-      nodeList.forEach(field2 => {
-        field2.classList.add('is-invalid')
-      })
-      // field.parentNode.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
-      const nodeBlock = field.parentNode.parentNode
-      nodeBlock.classList.add('is-invalid')
-      nodeBlock.parentNode.insertBefore(errDiv.firstElementChild, null)
-    } else {
-      field.classList.add('is-invalid')
-      // field.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
-      field.parentNode.insertBefore(errDiv.firstElementChild, null)
+      console.warn(this.helpers.format(this.settings.messages.NOT_EXISTS_FIELD, name))
     }
   }
 
@@ -139,25 +148,40 @@ export class BootstrapValidator {
   clearError (name) {
     if (typeof this.settings.clearError === 'function') {
       this.settings.clearError(name)
-      // } else if (this.settings.errorType === 'bs5') {
-      //   this.clearErrorBootstrap5.apply(this, [name]);
+    // } else if (this.settings.errorType === 'bs5') {
+    //   this.clearErrorBootstrap5.apply(this, [name]);
     } else {
       this.clearErrorBootstrap(name)
     }
   }
 
   /**
+   * 指定箇所エラー表示処理
+   * @param {string} name 項目名
+   * @param {string} message エラー文言
+   */
+  setError (name, message) {
+    if (typeof this.settings.setError === 'function') {
+      this.settings.setError.apply(this, [name, message])
+    // } else if (this.settings.errorType === 'bs5') {
+    //   this.setErrorBootstrap5.apply(this, [name, messages]);
+    } else {
+      this.setErrorBootstrap(name, message)
+    }
+  }
+
+  /**
    * エラークリア処理
-   * (Bootstrap5レイアウト)
+   * (Bootstrap5/4レイアウト)
    * @param {string} [name] 項目名
    */
   clearErrorBootstrap (name) {
     if (name) {
-      const nodeList = this.querySelectorAllByName(name)
-      const field = nodeList[0]
-      const type = field.attributes.type ? field.attributes.type.value : null
+      const ndValues = this.querySelectorAllByName(name)
+      const inputField = ndValues[0]
+      const type = inputField.attributes.type ? inputField.attributes.type.value : null
       if (['radio', 'checkbox'].indexOf(type) !== -1) {
-        const nodeBlock = field.parentNode.parentNode
+        const nodeBlock = inputField.parentNode.parentNode
         nodeBlock.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'))
         nodeBlock.parentNode.querySelectorAll('.invalid-feedback').forEach(el => el.remove())
       } else {
@@ -167,6 +191,31 @@ export class BootstrapValidator {
     } else {
       this.form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'))
       this.form.querySelectorAll('.invalid-feedback').forEach(el => el.remove())
+    }
+  }
+
+  /**
+   * 指定箇所エラー表示処理
+   * (Bootstrap5/4レイアウト)
+   * @param {string} name 項目名
+   * @param {string} message エラー文言
+   */
+  setErrorBootstrap (name, message) {
+    const errDiv = document.createElement('div')
+    errDiv.innerHTML = '<div class="invalid-feedback">' + message + '</div>'
+    const ndValues = this.querySelectorAllByName(name)
+    const field = ndValues[0]
+    const type = field.attributes.type ? field.attributes.type.value : null
+    if (['radio', 'checkbox'].indexOf(type) !== -1) {
+      ndValues.forEach(ndValue => ndValue.classList.add('is-invalid'))
+      // field.parentNode.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
+      const nodeBlock = field.parentNode.parentNode
+      nodeBlock.classList.add('is-invalid')
+      nodeBlock.parentNode.insertBefore(errDiv.firstElementChild, null)
+    } else {
+      field.classList.add('is-invalid')
+      // field.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
+      field.parentNode.insertBefore(errDiv.firstElementChild, null)
     }
   }
 
@@ -183,9 +232,35 @@ export class BootstrapValidator {
       this.displayError(errors)
       result = false
     }
-    // if (typeof settings.result === 'function') {
-    //   result = settings.result.apply(this, [result, arrErrors]);
-    // }
+    if (typeof this.settings.result === 'function') {
+      result = this.settings.result(result, errors)
+    }
+    return result
+  }
+
+  /**
+   * パラメータチェック
+   * (エラー時アラート)
+   * @param {Object} options オプション
+   * @returns {boolean|string[]} エラー値
+   */
+  validateAlert (options) {
+    const fields = (options && options.fields) ? options.fields : this.fields
+    let result = true
+    const errors = this.getValidateResult(fields)
+    if (errors.length > 0) {
+      window.alert(this.settings.messages.VALIDATE_ERROR + '\n' + this.helpers.join(errors))
+      if (this.settings.focusError) {
+        // 最初のエラーにフォーカス
+        this.settings.focusError.apply(errors[0].name)
+      } else {
+        this.focusError(errors[0].name)
+      }
+      result = false
+    }
+    if (typeof this.settings.result === 'function') {
+      result = this.settings.result(result, errors)
+    }
     return result
   }
 
@@ -253,7 +328,7 @@ export class BootstrapValidator {
     const fields = (options && options.fields) ? options.fields : this.fields
     const arrRuleErrors = []
     fields.forEach(field => {
-      const nodeList = this.querySelectorAllByName(field.name)
+      const ndValues = this.querySelectorAllByName(field.name)
       if (!field.rules) {
         return
       }
@@ -265,23 +340,26 @@ export class BootstrapValidator {
         let params;
         [rule, params] = this._parseRule(rule)
 
-        if (!this._helpers.existsValue(nodeList)) {
+        if (!this.helpers.existsValue(ndValues)) {
           if (rule === 'required') {
-            if (!this._helpers.existsValue(nodeList)) {
-              this._helpers.pushErrors(arrRuleErrors, field, this.settings.messages.REQUIRED)
+            if (!this.helpers.existsValue(ndValues)) {
+              this.helpers.pushErrors(arrRuleErrors, field, this.settings.messages.REQUIRED)
             }
           } else if (typeof this._validFunc[rule] === 'function') {
-            const errors = this._validFunc[rule].apply(this, [field, nodeList, params, this])
-            this._helpers.pushErrors(arrRuleErrors, field, errors)
+            const errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+            this.helpers.pushErrors(arrRuleErrors, field, errors)
           }
         } else if (typeof this._validExistsFunc[rule] === 'function') {
-          const errors = this._validExistsFunc[rule].apply(this, [field, nodeList, params, this])
-          this._helpers.pushErrors(arrRuleErrors, field, errors)
+          const errors = this._validExistsFunc[rule].apply(this, [field, ndValues, params, this])
+          this.helpers.pushErrors(arrRuleErrors, field, errors)
+        } else if (rule === 'checkbox') {
+          const errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+          this.helpers.pushErrors(arrRuleErrors, field, errors)
         }
         if (typeof rule === 'function') {
           // 独自チェック関数
-          const errors = rule.apply(this, [field, nodeList, params, this])
-          this._helpers.pushErrors(arrRuleErrors, field, errors)
+          const errors = rule.apply(this, [field, ndValues, params, this])
+          this.helpers.pushErrors(arrRuleErrors, field, errors)
         }
       })
     })
@@ -292,24 +370,24 @@ export class BootstrapValidator {
 class BootstrapValidatorHelpers {
   /**
    * フィールドから値を取得
-   * @param {NodeList} nodeList NodeList
+   * @param {NodeList} ndValues NodeList
    * @return {string} 値
    */
-  static getValue (nodeList) {
-    const type = nodeList[0].attributes.type ? nodeList[0].attributes.type.value : null
+  static getValue (ndValues) {
+    const type = ndValues[0].attributes.type ? ndValues[0].attributes.type.value : null
     let val
     if (type === 'radio') {
-      nodeList.forEach(el => {
+      ndValues.forEach(el => {
         if (el.checked) {
           val = el.value
           return true
         }
       })
     } else if (type !== 'checkbox') {
-      val = nodeList[0].value
+      val = ndValues[0].value
     } else {
       val = []
-      nodeList.forEach(el => {
+      ndValues.forEach(el => {
         if (el.checked) {
           val.push(el.value)
         }
@@ -320,25 +398,25 @@ class BootstrapValidatorHelpers {
 
   /**
    * 値が入力されているか？
-   * @param {NodeList} nodeList NodeList
+   * @param {NodeList} ndValues NodeList
    * @return {boolean} true:入力, false:未入力
    */
-  static existsValue (nodeList) {
-    let ret
-    if (!nodeList || nodeList.length === 0) {
-      ret = false
+  static existsValue (ndValues) {
+    if (!ndValues || ndValues.length === 0) {
+      return false
     }
-    const type = nodeList[0].attributes.type ? nodeList[0].attributes.type.value : null
+    let ret
+    const type = ndValues[0].attributes.type ? ndValues[0].attributes.type.value : null
     if (type === 'checkbox') {
       ret = false
-      nodeList.forEach(el => {
+      ndValues.forEach(el => {
         if (el.checked) {
           ret = true
           return true
         }
       })
     } else {
-      ret = !!this.getValue(nodeList)
+      ret = !!this.getValue(ndValues)
     }
     return ret
   }
@@ -353,11 +431,38 @@ class BootstrapValidatorHelpers {
   static pushErrors (arrErrors, field, errors) {
     const label = field.label ? field.label : field.name
     if (typeof errors === 'string' && errors) {
-      arrErrors.push({ name: field.name, label: label, messages: errors })
+      arrErrors.push({ name: field.name, label: label, message: errors })
     } else if (Array.isArray(errors)) {
-      errors.forEach(error => arrErrors.push({ name: field.name, label: label, messages: error }))
+      errors.forEach(error => {
+        arrErrors.push({ name: field.name, label: label, message: error })
+      })
     }
     return arrErrors
+  }
+
+  /**
+   * エラーメッセージを返す
+   * @param {string[]|Object[]} arrErrors エラー情報配列
+   * @param {?string} delimiter デリミタ
+   * @returns {string} エラーメッセージ
+   */
+  static join (arrErrors, delimiter) {
+    if (delimiter === undefined) delimiter = '\n'
+    const arrErrorMessages = []
+    arrErrors.forEach((error) => {
+      if (typeof error === 'string' && error) {
+        arrErrorMessages.push(error)
+      } else {
+        // -----------------------
+        // エラー情報追加
+        // error.name フィールド名
+        // error.d_name フィールド表示名
+        // error.message エラーメッセージ
+        // -----------------------
+        arrErrorMessages.push((error.label ? error.label : error.name) + ' : ' + error.message)
+      }
+    })
+    return arrErrorMessages.join(delimiter)
   }
 
   /**
@@ -556,17 +661,144 @@ class BootstrapValidatorValidFunc {
   /**
    * 数値チェック(値なし)
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList|HTMLInputElement[]} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static numeric (field, nodeList, params, v) {
+  static numeric (field, ndValues, params, v) {
     // type="number"時の仮対策
-    if (nodeList && nodeList[0].validity && nodeList[0].validity.badInput) {
-      return nodeList[0].validationMessage
+    if (ndValues && ndValues[0].validity && ndValues[0].validity.badInput) {
+      return ndValues[0].validationMessage
     }
     return null
+  }
+
+  /**
+   * チェックボックス
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues セレクタNodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params[0] 最小選択数
+   * @param {string|number} params[1] 最大選択数
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static checkbox (field, ndValues, params, v) {
+    const check = v.helpers.getValue(ndValues).length
+    const min = Number(params[0])
+    if (params.length >= 2) {
+      const max = Number(params[1])
+      if (check < min || max < check) {
+        return v.helpers.format(v.settings.messages.CHECKBOX_RANGE, min, max)
+      }
+    } else {
+      if (check < min) {
+        return v.helpers.format(v.settings.messages.CHECKBOX_MIN, min)
+      }
+    }
+  }
+
+  /**
+   * 郵便番号の4桁部分が入力された場合
+   * 3桁部が入力必須になるチェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues セレクタNodeList
+   * @param {array} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  // eslint-disable-next-line camelcase
+  static zip_ex (field, ndValues, params, v) {
+    const zipAfter = v.querySelectorAllByName(field.name + v.settings.zip_suffix)
+    if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
+      return v.settings.messages.INSUFFICIENT
+    }
+    return null
+  }
+
+  /**
+   * 年月日チェック
+   * フォーム name+"_y", name+"_m", name+"_d"のチェックを行う
+   * 3桁部が入力必須になるチェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues セレクタNodeList
+   * @param {array} params ルールパラメータ
+   * @param {string} params[0] 'required':必須チェック
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string[]|null} エラーメッセージ(正常時null)
+   */
+  static ymd (field, ndValues, params, v) {
+    // 変数宣言
+    const arrErrors = []
+
+    // 日付オブジェクト取得
+    let year = null
+    let month = null
+    let day = null
+    let isYear = false
+    let isMonth = false
+    let isDay = false
+    const objY = v.querySelectorAllByName(field.name + v.settings.ymd_suffix_y)
+    const objM = v.querySelectorAllByName(field.name + v.settings.ymd_suffix_m)
+    const objD = v.querySelectorAllByName(field.name + v.settings.ymd_suffix_d)
+    if (v.helpers.existsValue(objY)) {
+      isYear = true
+      year = v.helpers.getValue(objY)
+    }
+    if (v.helpers.existsValue(objM)) {
+      isMonth = true
+      month = v.helpers.getValue(objM)
+    }
+    if (v.helpers.existsValue(objD)) {
+      isDay = true
+      day = v.helpers.getValue(objD)
+    }
+
+    // 日付必須チェック
+    if (params[0] === 'required') {
+      if (!isYear) {
+        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_Y))
+      }
+      if (!isMonth) {
+        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_M))
+      }
+      if (!isDay) {
+        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_D))
+      }
+    } else {
+      // 日付の年月日が一部のみ入力されているとき
+      if ((isYear || isMonth || isDay) && !(isYear && isMonth && isDay)) {
+        if (!isYear) {
+          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_Y))
+        }
+        if (!isMonth) {
+          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_M))
+        }
+        if (!isDay) {
+          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_D))
+        }
+      }
+    }
+    // 年数値チェック
+    if (isYear && !v.helpers.isInteger(year)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_Y))
+    }
+    // 月数値チェック
+    if (isMonth && !v.helpers.isInteger(month)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_M))
+    }
+    // 日数値チェック
+    if (isDay && !v.helpers.isInteger(day)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_D))
+    }
+
+    // 年月日チェック
+    if (arrErrors.length === 0 && !v.helpers.isDate(year, month, day)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.DATE_INVALID))
+    }
+
+    return arrErrors
   }
 }
 
@@ -574,16 +806,16 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 確認項目
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static confirm (field, nodeList, params, v) {
-    const confirmVal = v.querySelectorAllByName(field.name + v.settings.confirm_suffix)
-    if (!nodeList || !confirmVal ||
-      v._helpers.getValue(nodeList) !== v._helpers.getValue(confirmVal)) {
-      return v._helpers.format(
+  static confirm (field, ndValues, params, v) {
+    const ndConfirmValues = v.querySelectorAllByName(field.name + v.settings.confirm_suffix)
+    if (!ndValues || (!ndConfirmValues || ndConfirmValues.length === 0) ||
+      v.helpers.getValue(ndValues) !== v.helpers.getValue(ndConfirmValues)) {
+      return v.helpers.format(
         v.settings.messages.CONFIRM,
         (field.label ? field.label : v.settings.messages.CONFIRM_FIELD))
     }
@@ -593,15 +825,15 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * E-Mailチェック
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static email (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static email (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     if (val) {
-      const errorEmail = v._helpers.isEmailEx.apply(v, [val])
+      const errorEmail = v.helpers.isEmailEx.apply(v, [val])
       if (errorEmail !== '') {
         return errorEmail
       }
@@ -612,13 +844,13 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 全角
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static zenkaku (field, nodeList, params, v) {
-    if (!v._helpers.isZenkaku(v._helpers.getValue(nodeList))) {
+  static zenkaku (field, ndValues, params, v) {
+    if (!v.helpers.isZenkaku(v.helpers.getValue(ndValues))) {
       return v.settings.messages.ZENKAKU
     }
     return null
@@ -627,13 +859,13 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 半角
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static hankaku (field, nodeList, params, v) {
-    if (!v._helpers.isHankaku(v._helpers.getValue(nodeList))) {
+  static hankaku (field, ndValues, params, v) {
+    if (!v.helpers.isHankaku(v.helpers.getValue(ndValues))) {
       return v.settings.messages.HANKAKU
     }
     return null
@@ -642,14 +874,14 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 全角カタカナ
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  static zen_katakana (field, nodeList, params, v) {
-    if (!v._helpers.isAllKana(v._helpers.getValue(nodeList))) {
+  static zen_katakana (field, ndValues, params, v) {
+    if (!v.helpers.isAllKana(v.helpers.getValue(ndValues))) {
       return v.settings.messages.ZEN_KANA
     }
     return null
@@ -658,13 +890,13 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 全角ひらがな
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static hiragana (field, nodeList, params, v) {
-    if (!v._helpers.isAllHiragana(v._helpers.getValue(nodeList))) {
+  static hiragana (field, ndValues, params, v) {
+    if (!v.helpers.isAllHiragana(v.helpers.getValue(ndValues))) {
       return v.settings.messages.HIRAGANA
     }
     return null
@@ -673,13 +905,13 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 電話番号
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static tel (field, nodeList, params, v) {
-    if (!v._helpers.isTel(v._helpers.getValue(nodeList))) {
+  static tel (field, ndValues, params, v) {
+    if (!v.helpers.isTel(v.helpers.getValue(ndValues))) {
       return v.settings.messages.TEL
     }
     return null
@@ -688,14 +920,14 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 数値チェック
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static numeric (field, nodeList, params, v) {
+  static numeric (field, ndValues, params, v) {
     // type="text"の時
-    const val = v._helpers.getValue(nodeList)
+    const val = v.helpers.getValue(ndValues)
     if (!isFinite(val) || val.indexOf(' ') !== -1 || val.indexOf('0x') !== -1) {
       return v.settings.messages.NUMERICAL_VALUE
     }
@@ -705,45 +937,45 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 最小文字数
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {string|number} params[0] 文字数
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static minlength (field, nodeList, params, v) {
+  static minlength (field, ndValues, params, v) {
     const min = Number(params[0])
-    if (v._helpers.getValue(nodeList).length < min) { return v._helpers.format(v.settings.messages.MIN_LENGTH, min) }
+    if (v.helpers.getValue(ndValues).length < min) { return v.helpers.format(v.settings.messages.MIN_LENGTH, min) }
     return null
   }
 
   /**
    * 最大文字数
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {string|number} params[0] 文字数
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static maxlength (field, nodeList, params, v) {
+  static maxlength (field, ndValues, params, v) {
     const max = Number(params[0])
-    if (max < v._helpers.getValue(nodeList).length) { return v._helpers.format(v.settings.messages.MAX_LENGTH, max) }
+    if (max < v.helpers.getValue(ndValues).length) { return v.helpers.format(v.settings.messages.MAX_LENGTH, max) }
     return null
   }
 
   /**
    * 数値桁数チェック
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {string|number} params[0] 最小桁数
    * @param {string|number} params[1] 最大桁数
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static numlength (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static numlength (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     let tmpReg = params[0]
     let tmpErrorMessage = params[0]
     if (params[1]) {
@@ -752,7 +984,7 @@ class BootstrapValidatorValidExistsFunc {
     }
     const reg = new RegExp('^\\d{' + tmpReg + '}$')
     if (!reg.test(val)) {
-      return v._helpers.format(v.settings.messages.NUM_LENGTH, tmpErrorMessage)
+      return v.helpers.format(v.settings.messages.NUM_LENGTH, tmpErrorMessage)
     }
     return null
   }
@@ -760,72 +992,72 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 最小値
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {string|number} params[0] 最小値
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static min (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
-    if (!v._helpers.isInteger(val)) {
+  static min (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    if (!v.helpers.isInteger(val)) {
       return v.settings.messages.INTEGER
     }
     const min = Number(params[0])
-    if (val < min) { return v._helpers.format(v.settings.messages.MIN, min) }
+    if (val < min) { return v.helpers.format(v.settings.messages.MIN, min) }
     return null
   }
 
   /**
    * 最大値
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {string|number} params[0] 最大値
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static max (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
-    if (!v._helpers.isInteger(val)) {
+  static max (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    if (!v.helpers.isInteger(val)) {
       return v.settings.messages.INTEGER
     }
     const max = Number(params[0])
-    if (max < val) { return v._helpers.format(v.settings.messages.MIN, max) }
+    if (max < val) { return v.helpers.format(v.settings.messages.MIN, max) }
     return null
   }
 
   /**
    * 数値範囲
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {string|number} params[0] 最小値
    * @param {string|number} params[1] 最大値
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static range (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
-    if (!v._helpers.isInteger(val)) {
+  static range (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    if (!v.helpers.isInteger(val)) {
       return v.settings.messages.INTEGER
     }
     const min = Number(params[0])
     const max = Number(params[1])
-    if (val < min || max < val) { return v._helpers.format(v.settings.messages.RANGE, min, max) }
+    if (val < min || max < val) { return v.helpers.format(v.settings.messages.RANGE, min, max) }
     return null
   }
 
   /**
    * 日付
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static date (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static date (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     // 1980/1/2
     //      ↓
     // 1980/1/2,1980/1/2,1980,1,2
@@ -833,7 +1065,7 @@ class BootstrapValidatorValidExistsFunc {
       return v.settings.messages.DATE
     }
     // 年月日チェック
-    if (!v._helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
+    if (!v.helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
       return v.settings.messages.DATE_INVALID
     }
     return null
@@ -843,13 +1075,13 @@ class BootstrapValidatorValidExistsFunc {
    * 日時チェック
    * [YYYY-MM-DD hh:mm:ss]または[YYYY/MM/DD]の書式でチェックする
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static datetime (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static datetime (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     // 1980/1/2 24:12:11
     //      ↓
     // 1980/1/2 23:12:11,1980/1/2,1980,1,2, 24:12:11,23:12:11,23,12,11
@@ -857,10 +1089,10 @@ class BootstrapValidatorValidExistsFunc {
       return v.settings.messages.DATETIME
     }
     // 年月日チェック
-    if (!v._helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
+    if (!v.helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
       return v.settings.messages.DATE_INVALID
     }
-    if (RegExp.$6 && !v._helpers.isTime(RegExp.$7, RegExp.$8, RegExp.$10)) {
+    if (RegExp.$6 && !v.helpers.isTime(RegExp.$7, RegExp.$8, RegExp.$10)) {
       return v.settings.messages.TIME_INVALID
     }
     return null
@@ -870,14 +1102,14 @@ class BootstrapValidatorValidExistsFunc {
    * 日付チェック
    * [YYYY/MM/DD] or [YYYY/MM] or [YYYY]の書式でチェックする
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  static date_ex (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static date_ex (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     // 1980/1/2
     //      ↓
     // 1980/1/2,1980/1/2,1980,1,2
@@ -888,7 +1120,7 @@ class BootstrapValidatorValidExistsFunc {
     const y = RegExp.$1
     const m = RegExp.$3 ? RegExp.$3 : 1
     const d = RegExp.$5 ? RegExp.$5 : 1
-    if (!v._helpers.isDate(y, m, d)) {
+    if (!v.helpers.isDate(y, m, d)) {
       return v.settings.messages.DATE_INVALID
     }
     return null
@@ -898,25 +1130,25 @@ class BootstrapValidatorValidExistsFunc {
    * 時間チェック
    * [hh:mm:ss]の書式でチェックする
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static time (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static time (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     if (params[0] === 'hm') {
       if (!val.match(/^(\d{1,2}):(\d{1,2})$/g)) {
         return v.settings.messages.TIME_HM
       }
-      if (!v._helpers.isTime(RegExp.$1, RegExp.$2, 0)) {
+      if (!v.helpers.isTime(RegExp.$1, RegExp.$2, 0)) {
         return v.settings.messages.TIME_INVALID
       }
     } else {
       if (!val.match(/^(\d{1,2}):(\d{1,2}):(\d{1,2})$/g)) {
         return v.settings.messages.TIME
       }
-      if (!v._helpers.isTime(RegExp.$1, RegExp.$2, RegExp.$3)) {
+      if (!v.helpers.isTime(RegExp.$1, RegExp.$2, RegExp.$3)) {
         return v.settings.messages.TIME_INVALID
       }
     }
@@ -926,13 +1158,13 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 郵便番号
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static zip (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static zip (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     if (!val.match(/^\d{1,3}-\d{1,4}$/g)) {
       return v.settings.messages.ZIP
     }
@@ -940,28 +1172,9 @@ class BootstrapValidatorValidExistsFunc {
   }
 
   /**
-   * チェックボックス
-   * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static checkbox (field, nodeList, params, v) {
-    const check = v._helpers.getValue(nodeList).length
-    const min = Number(params[0])
-    if (params.length >= 2) {
-      const max = Number(params[1])
-      if (check < min || max < check) { return v._helpers.format(v.settings.messages.CHECKBOX_RANGE, min, max) }
-    } else {
-      if (check < min) { return v._helpers.format(v.settings.messages.CHECKBOX_MIN, min) }
-    }
-  }
-
-  /**
    * 正規表現チェック
    * @param {object} field フィールド
-   * @param {NodeList} nodeList セレクタNodeList
+   * @param {NodeList} ndValues セレクタNodeList
    * @param {Array<string|number>} params ルールパラメータ
    * @param {string|RegExp} params[0] 正規表現(文字列 or 正規表現クラス)
    * @param {string} params[1] 正規表現フラグ(オプション)
@@ -969,8 +1182,8 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static regexp (field, nodeList, params, v) {
-    const val = v._helpers.getValue(nodeList)
+  static regexp (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     let reg, errorMessage
     if (!Array.isArray(params)) {
       params = [params]
