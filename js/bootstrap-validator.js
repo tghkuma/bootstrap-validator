@@ -7,10 +7,6 @@ export class BootstrapValidator {
   constructor (form, options) {
     /** フォームElement */
     this.form = form
-    /** フィールド情報 */
-    if (options && options.fields) {
-      this.fields = options.fields
-    }
 
     /** 初期設定情報 */
     this._settings = {
@@ -28,13 +24,20 @@ export class BootstrapValidator {
       messages: MESSAGES
     }
 
-    // 設定上書き
-    for (const paramName in this._settings) {
-      if (options[paramName]) {
-        if (typeof options[paramName] === 'object') {
-          this._settings[paramName] = Object.assign(this._settings[paramName], options[paramName])
-        } else {
-          this._settings[paramName] = options[paramName]
+    /** option */
+    if (options) {
+      /** フィールド情報 */
+      if (options.fields) {
+        this.fields = options.fields
+      }
+      /** 設定マージ */
+      for (const paramName in this._settings) {
+        if (options[paramName]) {
+          if (typeof options[paramName] === 'object') {
+            this._settings[paramName] = Object.assign(this._settings[paramName], options[paramName])
+          } else {
+            this._settings[paramName] = options[paramName]
+          }
         }
       }
     }
@@ -124,7 +127,7 @@ export class BootstrapValidator {
    * @param {string} name
    * @return {NodeList}
    */
-  querySelectorAllByName (name) {
+  querySelectorByName (name) {
     const el = this.form.querySelectorAll('*[name="' + name + '"]')
     if (!el) {
       console.error('Not found element ' + name + '.')
@@ -153,7 +156,7 @@ export class BootstrapValidator {
    * @param {string} name
    */
   focusError (name) {
-    const fields = this.querySelectorAllByName(name)
+    const fields = this.querySelectorByName(name)
     if (fields && fields.length > 0) {
       fields[0].focus()
     } else {
@@ -169,8 +172,8 @@ export class BootstrapValidator {
   clearError (name) {
     if (typeof this.settings.clearError === 'function') {
       this.settings.clearError(name)
-    // } else if (this.settings.errorType === 'bs5') {
-    //   this.clearErrorBootstrap5.apply(this, [name]);
+    // } else if (this.settings.errorType === 'bs3') {
+    //   this.clearErrorBootstrap3.apply(this, [name]);
     } else {
       this.clearErrorBootstrap(name)
     }
@@ -184,8 +187,8 @@ export class BootstrapValidator {
   setError (name, message) {
     if (typeof this.settings.setError === 'function') {
       this.settings.setError.apply(this, [name, message])
-    // } else if (this.settings.errorType === 'bs5') {
-    //   this.setErrorBootstrap5.apply(this, [name, messages]);
+    // } else if (this.settings.errorType === 'bs3') {
+    //   this.setErrorBootstrap3.apply(this, [name, messages]);
     } else {
       this.setErrorBootstrap(name, message)
     }
@@ -198,13 +201,13 @@ export class BootstrapValidator {
    */
   clearErrorBootstrap (name) {
     if (name) {
-      const ndValues = this.querySelectorAllByName(name)
+      const ndValues = this.querySelectorByName(name)
       const inputField = ndValues[0]
       const type = inputField.attributes.type ? inputField.attributes.type.value : null
       if (['radio', 'checkbox'].indexOf(type) !== -1) {
         const nodeBlock = inputField.parentNode.parentNode
         nodeBlock.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'))
-        nodeBlock.parentNode.querySelectorAll('.invalid-feedback').forEach(el => el.remove())
+        nodeBlock.querySelectorAll('.invalid-feedback').forEach(el => el.remove())
       } else {
         this.form.querySelectorAll("*[name='" + name + "'].is-invalid").forEach(el => el.classList.remove('is-invalid'))
         this.form.querySelectorAll("*[name='" + name + "'] ~ .invalid-feedback").forEach(el => el.remove())
@@ -224,13 +227,13 @@ export class BootstrapValidator {
   setErrorBootstrap (name, message) {
     const errDiv = document.createElement('div')
     errDiv.innerHTML = '<div class="invalid-feedback">' + message + '</div>'
-    const ndValues = this.querySelectorAllByName(name)
+    const ndValues = this.querySelectorByName(name)
     const field = ndValues[0]
     const type = field.attributes.type ? field.attributes.type.value : null
     if (['radio', 'checkbox'].indexOf(type) !== -1) {
       ndValues.forEach(ndValue => ndValue.classList.add('is-invalid'))
       // field.parentNode.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
-      const nodeBlock = field.parentNode.parentNode
+      const nodeBlock = field.parentNode
       nodeBlock.classList.add('is-invalid')
       nodeBlock.parentNode.insertBefore(errDiv.firstElementChild, null)
     } else {
@@ -246,9 +249,8 @@ export class BootstrapValidator {
    * @return {boolean} true:正常
    */
   validate (options) {
-    const fields = (options && options.fields) ? options.fields : this.fields
     let result = true
-    const errors = this.getValidateResult(fields)
+    const errors = this.getValidateResult(options)
     if (errors.length > 0) {
       this.displayError(errors)
       result = false
@@ -266,9 +268,8 @@ export class BootstrapValidator {
    * @returns {boolean|string[]} エラー値
    */
   validateAlert (options) {
-    const fields = (options && options.fields) ? options.fields : this.fields
     let result = true
-    const errors = this.getValidateResult(fields)
+    const errors = this.getValidateResult(options)
     if (errors.length > 0) {
       window.alert(this.settings.messages.VALIDATE_ERROR + '\n' + this.helpers.join(errors))
       if (this.settings.focusError) {
@@ -283,6 +284,64 @@ export class BootstrapValidator {
       result = this.settings.result(result, errors)
     }
     return result
+  }
+
+  /**
+   * フィールド/ルール情報取得
+   * @returns {Array<Object>}
+   */
+  getFieldsRules () {
+    const fields = []
+    Array.from(this.form).forEach((element) => {
+      const name = element.name
+      if (!name) {
+        return
+      }
+      const type = element.getAttribute('type')
+      if (type === 'radio' || type === 'checkbox') {
+        if (fields.find(item => item.name === element.name)) {
+          return
+        }
+      }
+      const rules = []
+      if (element.required) {
+        rules.push('required')
+      }
+      // 属性によるパターン
+      [['minLength', 'minlength'], ['maxLength', 'maxlength'], 'min', 'max', ['pattern', 'regexp']].forEach(function (attr) {
+        let rule
+        if (Array.isArray(attr)) {
+          rule = attr[1]
+          attr = attr[0]
+        } else {
+          rule = attr
+        }
+        const value = element.getAttribute(attr)
+        if (value !== null) {
+          rules.push([rule, value])
+        }
+      })
+      // type="xxx"によるバリデート判別
+      let rule
+      switch (type) {
+        case 'date':
+        case 'email':
+        case 'tel':
+          rule = type
+          break
+        case 'number':
+          rule = 'numeric'
+          break
+        case 'time':
+          rule = ['time', 'hm']
+          break
+      }
+      if (rule) {
+        rules.push(rule)
+      }
+      fields.push({ name: name, rules: rules })
+    })
+    return fields
   }
 
   _parseRule (rule) {
@@ -343,13 +402,14 @@ export class BootstrapValidator {
 
   /**
    * バリデーション結果取得
+   * @param {Object} [options] オプションフィールド情報
    * @returns {boolean|string[]} エラー値
    */
   getValidateResult (options) {
-    const fields = (options && options.fields) ? options.fields : this.fields
+    const fields = (options && options.fields) ? options.fields : (this.fields || this.getFieldsRules())
     const arrRuleErrors = []
     fields.forEach(field => {
-      const ndValues = this.querySelectorAllByName(field.name)
+      const ndValues = this.querySelectorByName(field.name)
       if (!field.rules) {
         return
       }
@@ -682,7 +742,7 @@ class BootstrapValidatorValidFunc {
   /**
    * 数値チェック(値なし)
    * @param {object} field フィールド
-   * @param {NodeList|HTMLInputElement[]} ndValues セレクタNodeList
+   * @param {NodeList<HTMLInputElement>} ndValues セレクタNodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
@@ -731,7 +791,7 @@ class BootstrapValidatorValidFunc {
    */
   // eslint-disable-next-line camelcase
   static zip_ex (field, ndValues, params, v) {
-    const zipAfter = v.querySelectorAllByName(field.name + v.settings.zip_suffix)
+    const zipAfter = v.querySelectorByName(field.name + v.settings.zip_suffix)
     if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
       return v.settings.messages.INSUFFICIENT
     }
@@ -760,9 +820,9 @@ class BootstrapValidatorValidFunc {
     let isYear = false
     let isMonth = false
     let isDay = false
-    const objY = v.querySelectorAllByName(field.name + v.settings.ymd_suffix_y)
-    const objM = v.querySelectorAllByName(field.name + v.settings.ymd_suffix_m)
-    const objD = v.querySelectorAllByName(field.name + v.settings.ymd_suffix_d)
+    const objY = v.querySelectorByName(field.name + v.settings.ymd_suffix_y)
+    const objM = v.querySelectorByName(field.name + v.settings.ymd_suffix_m)
+    const objD = v.querySelectorByName(field.name + v.settings.ymd_suffix_d)
     if (v.helpers.existsValue(objY)) {
       isYear = true
       year = v.helpers.getValue(objY)
@@ -833,7 +893,7 @@ class BootstrapValidatorValidExistsFunc {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   static confirm (field, ndValues, params, v) {
-    const ndConfirmValues = v.querySelectorAllByName(field.name + v.settings.confirm_suffix)
+    const ndConfirmValues = v.querySelectorByName(field.name + v.settings.confirm_suffix)
     if (!ndValues || (!ndConfirmValues || ndConfirmValues.length === 0) ||
       v.helpers.getValue(ndValues) !== v.helpers.getValue(ndConfirmValues)) {
       return v.helpers.format(
