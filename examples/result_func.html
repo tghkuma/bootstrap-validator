@@ -10,31 +10,31 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 <script type="module">
-  "use strict";
-  import { BootstrapValidator } from "../js/bootstrap-validator.js"
+  'use strict'
+  import { BootstrapValidator } from '../js/bootstrap-validator.js'
 
   document.addEventListener('DOMContentLoaded', () => {
     const fields = [
-      { name:'name', label:'名前', rules:['required', 'zenkaku']},
-      { name:'birthday', label:'日付', rules:['date']}
+      { name: 'name', label: '名前', rules: ['required', 'zenkaku'] },
+      { name: 'birthday', label: '日付', rules: ['date'] }
     ]
     new BootstrapValidator("form[name='form']", {
       result: (result, errors) => {
-        alert(
-          'バリデーション結果:' + (result ? '正常':'エラー') +
+        window.alert(
+          'バリデーション結果:' + (result ? '正常' : 'エラー') +
           (result ? '' : ('\n' + '最初のエラー:' + errors[0].message))
         )
         return result
       },
       fields: fields
-    });
+    })
     new BootstrapValidator("form[name='form2']", {
       result: (result, errors) => {
-        return confirm('バリデーション結果:' + (result ? '正常':'エラー') + '\n登録しますか？')
+        return window.confirm('バリデーション結果:' + (result ? '正常' : 'エラー') + '\n登録しますか？')
       },
       fields: fields
-    });
-  });
+    })
+  })
 </script>
 <div class="container">
   <div class="content">

@@ -11,38 +11,47 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
 <script type="module">
-  "use strict";
-  import { BootstrapValidator } from "../../js/bootstrap-validator.js"
+  'use strict'
+  import { BootstrapValidator } from '../../js/bootstrap-validator.js'
 
   document.addEventListener('DOMContentLoaded', () => {
-    const validator = new BootstrapValidator("form[name=form]", {
-      fields:[
-        { name:'account', d_name:'アカウント', rules:['required', 'minlength:2', 'hankaku',
-            { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
-        { name:'password', d_name:'パスワード', rules:['required', 'hankaku', 'confirm',
-            ['regexp',[/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]},
-        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
-        { name:'name2', d_name:'名前2', rules:['required', 'zenkaku']},
-        { name:'birthday', d_name:'誕生日', rules:['date']},
-        { name:'email', d_name:'EMAIL', rules:['email']},
-        { name:'tel', d_name:'電話番号', rules:['maxlength:32', 'tel']},
-        { name:'number', d_name:'数値', rules:['numeric']},
-        { name:'number_required', d_name:'数値(必須)', rules:['numeric','required']},
-        { name:'number2', d_name:'数値', rules:['numeric']},
-        { name:'select', d_name:'セレクト', rules:['required']},
-        { name:'radio', d_name:'ラジオボタン', rules:['required']},
-        { name:'checkbox', d_name:'チェックボックス', rules:['required']},
-        { name:'checkbox2', d_name:'チェックボックス2', rules:[['checkbox',2,3]]},
-        { name:'comment', d_name:'コメント', rules:['maxlength:16']}
-      ]});
-    validator.form.addEventListener('reset', () => validator.clearError());
-    document.querySelector('#clear-error').addEventListener('click', () => validator.clearError());
+    const validator = new BootstrapValidator('form[name=form]', {
+      fields: [
+        {
+          name: 'account',
+          d_name: 'アカウント',
+          rules: ['required', 'minlength:2', 'hankaku',
+            { rule: 'regexp', params: [/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます'] }]
+        },
+        {
+          name: 'password',
+          d_name: 'パスワード',
+          rules: ['required', 'hankaku', 'confirm',
+            ['regexp', [/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]
+        },
+        { name: 'name', d_name: '名前', rules: ['required', 'zenkaku'] },
+        { name: 'name2', d_name: '名前2', rules: ['required', 'zenkaku'] },
+        { name: 'birthday', d_name: '誕生日', rules: ['date'] },
+        { name: 'email', d_name: 'EMAIL', rules: ['email'] },
+        { name: 'tel', d_name: '電話番号', rules: ['maxlength:32', 'tel'] },
+        { name: 'number', d_name: '数値', rules: ['numeric'] },
+        { name: 'number_required', d_name: '数値(必須)', rules: ['numeric', 'required'] },
+        { name: 'number2', d_name: '数値', rules: ['numeric'] },
+        { name: 'select', d_name: 'セレクト', rules: ['required'] },
+        { name: 'radio', d_name: 'ラジオボタン', rules: ['required'] },
+        { name: 'checkbox', d_name: 'チェックボックス', rules: ['required'] },
+        { name: 'checkbox2', d_name: 'チェックボックス2', rules: [['checkbox', 2, 3]] },
+        { name: 'comment', d_name: 'コメント', rules: ['maxlength:16'] }
+      ]
+    })
+    validator.form.addEventListener('reset', () => validator.clearError())
+    document.querySelector('#clear-error').addEventListener('click', () => validator.clearError())
     document.querySelector('#clear-error2').addEventListener('click', () => {
-      validator.clearError('name');
-      validator.clearError('radio');
-      validator.clearError('checkbox');
-    });
-  });
+      validator.clearError('name')
+      validator.clearError('radio')
+      validator.clearError('checkbox')
+    })
+  })
 </script>
 <div class="container">
   <div class="content">

@@ -10,39 +10,48 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 <script type="module">
-  "use strict";
-  import { BootstrapValidator } from "../js/bootstrap-validator.js"
+  'use strict'
+  import { BootstrapValidator } from '../js/bootstrap-validator.js'
 
   document.addEventListener('DOMContentLoaded', () => {
     const validator = new BootstrapValidator("form[name='form']", {
-      fields:[
-        { name:'account', label:'アカウント', rules:['required', 'minlength:2', 'hankaku',
-            { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
-        { name:'password', label:'パスワード', rules:['required', 'hankaku', 'confirm',
-            ['regexp',[/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]},
-        { name:'name', label:'名前', rules:['required', 'zenkaku']},
-        { name:'name2', label:'名前2', rules:['required', 'zenkaku']},
-        { name:'birthday', label:'誕生日', rules:['date']},
-        { name:'email', label:'EMAIL', rules:['email']},
-        { name:'tel', label:'電話番号', rules:['maxlength:32', 'tel']},
-        { name:'number', label:'数値', rules:['numeric']},
-        { name:'number_required', label:'数値(必須)', rules:['numeric','required']},
-        { name:'number2', label:'数値', rules:['numeric']},
-        { name:'select', label:'セレクト', rules:['required']},
-        { name:'radio', label:'ラジオボタン', rules:['required']},
-        { name:'checkbox', label:'チェックボックス', rules:['required']},
-        { name:'checkbox2', label:'チェックボックス2', rules:[['checkbox',2,3]]},
-        { name:'comment', label:'コメント', rules:['maxlength:16']}
-      ]});
+      fields: [
+        {
+          name: 'account',
+          label: 'アカウント',
+          rules: ['required', 'minlength:2', 'hankaku',
+            { rule: 'regexp', params: [/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます'] }]
+        },
+        {
+          name: 'password',
+          label: 'パスワード',
+          rules: ['required', 'hankaku', 'confirm',
+            ['regexp', [/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]
+        },
+        { name: 'name', label: '名前', rules: ['required', 'zenkaku'] },
+        { name: 'name2', label: '名前2', rules: ['required', 'zenkaku'] },
+        { name: 'birthday', label: '誕生日', rules: ['date'] },
+        { name: 'email', label: 'EMAIL', rules: ['email'] },
+        { name: 'tel', label: '電話番号', rules: ['maxlength:32', 'tel'] },
+        { name: 'number', label: '数値', rules: ['numeric'] },
+        { name: 'number_required', label: '数値(必須)', rules: ['numeric', 'required'] },
+        { name: 'number2', label: '数値', rules: ['numeric'] },
+        { name: 'select', label: 'セレクト', rules: ['required'] },
+        { name: 'radio', label: 'ラジオボタン', rules: ['required'] },
+        { name: 'checkbox', label: 'チェックボックス', rules: ['required'] },
+        { name: 'checkbox2', label: 'チェックボックス2', rules: [['checkbox', 2, 3]] },
+        { name: 'comment', label: 'コメント', rules: ['maxlength:16'] }
+      ]
+    })
 
-    validator.form.addEventListener('reset', () => validator.clearError());
-    document.querySelector('#clear-error').addEventListener('click', () => validator.clearError());
+    validator.form.addEventListener('reset', () => validator.clearError())
+    document.querySelector('#clear-error').addEventListener('click', () => validator.clearError())
     document.querySelector('#clear-error2').addEventListener('click', () => {
-      validator.clearError('name');
-      validator.clearError('radio');
-      validator.clearError('checkbox');
-    });
-  });
+      validator.clearError('name')
+      validator.clearError('radio')
+      validator.clearError('checkbox')
+    })
+  })
 </script>
 <div class="container">
   <div class="content">
