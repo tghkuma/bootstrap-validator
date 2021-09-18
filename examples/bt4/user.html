@@ -37,6 +37,11 @@
       ]});
     validator.form.addEventListener('reset', () => validator.clearError());
     document.querySelector('#clear-error').addEventListener('click', () => validator.clearError());
+    document.querySelector('#clear-error2').addEventListener('click', () => {
+      validator.clearError('name');
+      validator.clearError('radio');
+      validator.clearError('checkbox');
+    });
   });
 </script>
 <div class="container">
@@ -192,6 +197,7 @@
         <input type="submit" class="btn btn-primary" value="登録">
         <input type="reset" class="btn btn-secondary" value="リセット">
         <input id="clear-error" type="button" class="btn btn-secondary" value="エラークリア">
+        <input id="clear-error2" type="button" class="btn btn-secondary" value="エラークリア2">
       </div>
     </form>
     <a href="index.html">一覧へ</a>

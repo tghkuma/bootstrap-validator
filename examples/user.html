@@ -37,6 +37,11 @@
 
     validator.form.addEventListener('reset', () => validator.clearError());
     document.querySelector('#clear-error').addEventListener('click', () => validator.clearError());
+    document.querySelector('#clear-error2').addEventListener('click', () => {
+      validator.clearError('name');
+      validator.clearError('radio');
+      validator.clearError('checkbox');
+    });
   });
 </script>
 <div class="container">
@@ -128,61 +133,55 @@
       <div class="mb-3 row">
         <label class="form-label col-sm-4">ラジオボタン(必須)</label>
         <div class="col-sm-8">
-          <div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="radio" value="0" id="id-radio-0">
-              <label class="form-check-label" for="id-radio-0">ラジオボタン0</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="radio" value="1" id="id-radio-1">
-              <label class="form-check-label" for="id-radio-1">ラジオボタン1</label>
-            </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="radio" value="0" id="id-radio-0">
+            <label class="form-check-label" for="id-radio-0">ラジオボタン0</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="radio" value="1" id="id-radio-1">
+            <label class="form-check-label" for="id-radio-1">ラジオボタン1</label>
           </div>
         </div>
       </div>
       <div class="mb-3 row">
         <label class="control-form-label col-sm-4">チェックボックス(必須)</label>
         <div class="col-sm-8">
-          <div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox" value="0" id="id-checkbox-0">
-              <label class="form-check-label" for="id-checkbox-0">チェックボックス0</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox" value="1" id="id-checkbox-1">
-              <label class="form-check-label" for="id-checkbox-1">チェックボックス1</label>
-            </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox" value="0" id="id-checkbox-0">
+            <label class="form-check-label" for="id-checkbox-0">チェックボックス0</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox" value="1" id="id-checkbox-1">
+            <label class="form-check-label" for="id-checkbox-1">チェックボックス1</label>
           </div>
         </div>
       </div>
       <div class="mb-3 row">
         <label class="control-form-label col-sm-4">チェックボックス(選択2〜3)</label>
         <div class="col-sm-8">
-          <div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox2" value="0" id="id-checkbox2-0">
-              <label class="form-check-label" for="id-checkbox2-0">チェックボックス0</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox2" value="1" id="id-checkbox2-1">
-              <label class="form-check-label" for="id-checkbox2-1">チェックボックス1</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox2" value="2" id="id-checkbox2-2">
-              <label class="form-check-label" for="id-checkbox2-2">チェックボックス2</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox2" value="3" id="id-checkbox2-3">
-              <label class="form-check-label" for="id-checkbox2-3">チェックボックス3</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox2" value="4" id="id-checkbox2-4">
-              <label class="form-check-label" for="id-checkbox2-4">チェックボックス4</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="checkbox2" value="5" id="id-checkbox2-5">
-              <label class="form-check-label" for="id-checkbox2-5">チェックボックス5</label>
-            </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox2" value="0" id="id-checkbox2-0">
+            <label class="form-check-label" for="id-checkbox2-0">チェックボックス0</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox2" value="1" id="id-checkbox2-1">
+            <label class="form-check-label" for="id-checkbox2-1">チェックボックス1</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox2" value="2" id="id-checkbox2-2">
+            <label class="form-check-label" for="id-checkbox2-2">チェックボックス2</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox2" value="3" id="id-checkbox2-3">
+            <label class="form-check-label" for="id-checkbox2-3">チェックボックス3</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox2" value="4" id="id-checkbox2-4">
+            <label class="form-check-label" for="id-checkbox2-4">チェックボックス4</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="checkbox2" value="5" id="id-checkbox2-5">
+            <label class="form-check-label" for="id-checkbox2-5">チェックボックス5</label>
           </div>
         </div>
       </div>
@@ -196,6 +195,7 @@
         <input type="submit" class="btn btn-primary" value="登録">
         <input type="reset" class="btn btn-secondary" value="リセット">
         <input id="clear-error" type="button" class="btn btn-secondary" value="エラークリア">
+        <input id="clear-error2" type="button" class="btn btn-secondary" value="エラークリア2">
       </div>
     </form>
     <a href="index.html">一覧へ</a>
