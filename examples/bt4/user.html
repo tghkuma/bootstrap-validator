@@ -15,8 +15,7 @@
   import { BootstrapValidator } from "../../js/bootstrap-validator.js"
 
   document.addEventListener('DOMContentLoaded', () => {
-    var $form = $("form[name=form]");
-    const validator = new BootstrapValidator("form[name='form']", {
+    const validator = new BootstrapValidator("form[name=form]", {
       fields:[
         { name:'account', d_name:'アカウント', rules:['required', 'minlength:2', 'hankaku',
             { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
@@ -37,9 +36,7 @@
         { name:'comment', d_name:'コメント', rules:['maxlength:16']}
       ]});
     validator.form.addEventListener('reset', () => validator.clearError());
-    document.querySelector('#clear-error').addEventListener('click', () => {
-      validator.clearError();
-    });
+    document.querySelector('#clear-error').addEventListener('click', () => validator.clearError());
   });
 </script>
 <div class="container">

@@ -13,14 +13,12 @@
 <script src="../js/jquery.btfw.form_validate.js"></script>
 <script>
   $(function() {
-    var $form = $("form[name=form]");
+    let $form = $("form[name=form]");
     $form.formValidate({ fields:[
         { name:'number', label:'数値', rules:['numeric']},
         { name:'number2', label:'数値', rules:['numeric']}
       ]});
-    $('#clear-error').on('click', function () {
-      $form.formValidate('clearError');
-    });
+    $('#clear-error').on('click', () => $form.formValidate('clearError'));
   });
 </script>
 <div class="container">
