@@ -24,10 +24,10 @@
         errors.forEach (function(error){
           /**
            *  @namespace error.name フィールド名
-           *  @namespace error.d_name フィールド表示名
+           *  @namespace error.label フィールド表示名
            *  @namespace error.message エラーメッセージ
            */
-          alert.push((error.d_name ? error.d_name: error.name)+' : '+error.message);
+          alert.push((error.label ? error.label: error.name)+' : '+error.message);
         });
         $alert.html(alert.join('<br>'));
         $alert.show();
@@ -43,14 +43,14 @@
     $form.formValidate({ submit: funcDispError,
       clearError: funcClearError,
       fields:[
-        { name:'account', d_name:'アカウント', rules:['required', 'minlength:2', 'hankaku',
+        { name:'account', label:'アカウント', rules:['required', 'minlength:2', 'hankaku',
             { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
-        { name:'password', d_name:'パスワード', rules:['required', 'hankaku', 'confirm',
+        { name:'password', label:'パスワード', rules:['required', 'hankaku', 'confirm',
             ['regexp',[/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]},
-        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
-        { name:'email', d_name:'EMAIL', rules:['email']},
-        { name:'birthday', d_name:'日付', rules:['date']},
-        { name:'comment', d_name:'コメント', rules:['maxlength:16']}
+        { name:'name', label:'名前', rules:['required', 'zenkaku']},
+        { name:'email', label:'EMAIL', rules:['email']},
+        { name:'birthday', label:'日付', rules:['date']},
+        { name:'comment', label:'コメント', rules:['maxlength:16']}
       ]});
     $('#clear-error').on('click', function () {
       $form.formValidate('clearError');

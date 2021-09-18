@@ -15,8 +15,8 @@
   $(function() {
     var $form = $("form[name=form]");
     $form.formValidate({ fields:[
-        { name:'number', d_name:'数値', rules:['numeric']},
-        { name:'number2', d_name:'数値', rules:['numeric']}
+        { name:'number', label:'数値', rules:['numeric']},
+        { name:'number2', label:'数値', rules:['numeric']}
       ]});
     $('#clear-error').on('click', function () {
       $form.formValidate('clearError');

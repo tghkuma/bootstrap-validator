@@ -36,7 +36,7 @@
       ]});
 
     validator.form.addEventListener('reset', () => validator.clearError());
-    document.querySelector('#clear_error').addEventListener('click', () => {
+    document.querySelector('#clear-error').addEventListener('click', () => {
       validator.clearError();
     });
   });
@@ -102,9 +102,9 @@
         </div>
       </div>
       <div class="mb-3 row">
-        <label class="form-label col-sm-4" for="id-number_required">数値(必須)</label>
+        <label class="form-label col-sm-4" for="id-number-required">数値(必須)</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" id="id-number_required" name="number_required" placeholder="数値チェック(必須)">
+          <input type="text" class="form-control" id="id-number-required" name="number_required" placeholder="数値チェック(必須)">
         </div>
       </div>
       <div class="mb-3 row">
@@ -197,7 +197,7 @@
       <div class="col-auto pb-3">
         <input type="submit" class="btn btn-primary" value="登録">
         <input type="reset" class="btn btn-secondary" value="リセット">
-        <input id="clear_error" type="button" class="btn btn-secondary" value="エラークリア">
+        <input id="clear-error" type="button" class="btn btn-secondary" value="エラークリア">
       </div>
     </form>
     <a href="index.html">一覧へ</a>

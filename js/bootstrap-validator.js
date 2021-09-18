@@ -141,48 +141,6 @@ export class BootstrapValidator {
   }
 
   /**
-   * 指定箇所エラー表示処理
-   * @param {string} name 項目名
-   * @param {string} message エラー文言
-   */
-  setError (name, message) {
-    if (typeof this.settings.setError === 'function') {
-      this.settings.setError.apply(this, [name, message])
-      // } else if (this.settings.errorType === 'bs5') {
-      //   this.setErrorBootstrap5.apply(this, [name, messages]);
-    } else {
-      this.setErrorBootstrap(name, message)
-    }
-  }
-
-  /**
-   * 指定箇所エラー表示処理
-   * (Bootstrap5レイアウト)
-   * @param {string} name 項目名
-   * @param {string} message エラー文言
-   */
-  setErrorBootstrap (name, message) {
-    const errDiv = document.createElement('div')
-    errDiv.innerHTML = '<div class="invalid-feedback">' + message + '</div>'
-    const ndValues = this.querySelectorAllByName(name)
-    const field = ndValues[0]
-    const type = field.attributes.type ? field.attributes.type.value : null
-    if (['radio', 'checkbox'].indexOf(type) !== -1) {
-      ndValues.forEach(ndValue => {
-        ndValue.classList.add('is-invalid')
-      })
-      // field.parentNode.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
-      const nodeBlock = field.parentNode.parentNode
-      nodeBlock.classList.add('is-invalid')
-      nodeBlock.parentNode.insertBefore(errDiv.firstElementChild, null)
-    } else {
-      field.classList.add('is-invalid')
-      // field.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
-      field.parentNode.insertBefore(errDiv.firstElementChild, null)
-    }
-  }
-
-  /**
    * エラークリア処理
    * (Bootstrap5レイアウト)
    * @param {string} [name] 項目名
@@ -190,16 +148,31 @@ export class BootstrapValidator {
   clearError (name) {
     if (typeof this.settings.clearError === 'function') {
       this.settings.clearError(name)
-      // } else if (this.settings.errorType === 'bs5') {
-      //   this.clearErrorBootstrap5.apply(this, [name]);
+    // } else if (this.settings.errorType === 'bs5') {
+    //   this.clearErrorBootstrap5.apply(this, [name]);
     } else {
       this.clearErrorBootstrap(name)
     }
   }
 
   /**
+   * 指定箇所エラー表示処理
+   * @param {string} name 項目名
+   * @param {string} message エラー文言
+   */
+  setError (name, message) {
+    if (typeof this.settings.setError === 'function') {
+      this.settings.setError.apply(this, [name, message])
+    // } else if (this.settings.errorType === 'bs5') {
+    //   this.setErrorBootstrap5.apply(this, [name, messages]);
+    } else {
+      this.setErrorBootstrap(name, message)
+    }
+  }
+
+  /**
    * エラークリア処理
-   * (Bootstrap5レイアウト)
+   * (Bootstrap5/4レイアウト)
    * @param {string} [name] 項目名
    */
   clearErrorBootstrap (name) {
@@ -218,6 +191,31 @@ export class BootstrapValidator {
     } else {
       this.form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'))
       this.form.querySelectorAll('.invalid-feedback').forEach(el => el.remove())
+    }
+  }
+
+  /**
+   * 指定箇所エラー表示処理
+   * (Bootstrap5/4レイアウト)
+   * @param {string} name 項目名
+   * @param {string} message エラー文言
+   */
+  setErrorBootstrap (name, message) {
+    const errDiv = document.createElement('div')
+    errDiv.innerHTML = '<div class="invalid-feedback">' + message + '</div>'
+    const ndValues = this.querySelectorAllByName(name)
+    const field = ndValues[0]
+    const type = field.attributes.type ? field.attributes.type.value : null
+    if (['radio', 'checkbox'].indexOf(type) !== -1) {
+      ndValues.forEach(ndValue => ndValue.classList.add('is-invalid'))
+      // field.parentNode.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
+      const nodeBlock = field.parentNode.parentNode
+      nodeBlock.classList.add('is-invalid')
+      nodeBlock.parentNode.insertBefore(errDiv.firstElementChild, null)
+    } else {
+      field.classList.add('is-invalid')
+      // field.parentNode.insertBefore(errDiv.firstElementChild, field.nextElementSibling);
+      field.parentNode.insertBefore(errDiv.firstElementChild, null)
     }
   }
 

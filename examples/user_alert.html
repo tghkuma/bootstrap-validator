@@ -17,15 +17,16 @@
     const validator = new BootstrapValidator("form[name='form']", {
       submit:'validateAlert',
       fields:[
-        { name:'account', d_name:'アカウント', rules:['required', 'minlength:2', 'hankaku',
+        { name:'account', label:'アカウント', rules:['required', 'minlength:2', 'hankaku',
             { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
-        { name:'password', d_name:'パスワード', rules:['required', 'hankaku', 'confirm',
+        { name:'password', label:'パスワード', rules:['required', 'hankaku', 'confirm',
             ['regexp',[/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]},
-        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
-        { name:'email', d_name:'EMAIL', rules:['email']},
-        { name:'birthday', d_name:'日付', rules:['date']},
-        { name:'birthday2', d_name:'誕生日2', rules:['ymd']},
-        { name:'comment', d_name:'コメント', rules:['maxlength:16']}
+        { name:'name', label:'名前', rules:['required', 'zenkaku']},
+        { name:'email', label:'EMAIL', rules:['email']},
+        { name:'birthday', label:'誕生日', rules:['date']},
+        { name:'birthday2', label:'誕生日2', rules:['ymd']},
+        { name:'zip', label:'郵便番号', rules:['zip_ex']},
+        { name:'comment', label:'コメント', rules:['maxlength:16']}
       ]});
 
     validator.form.addEventListener('reset', () => validator.clearError());
@@ -57,6 +58,12 @@
           </div>
         </div>
         <div class="mb-3 row">
+          <label class="form-label col-sm-4" for="id-email">EMAIL</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="id-email" name="email" size="64" maxlength="64" placeholder="emailチェック">
+          </div>
+        </div>
+        <div class="mb-3 row">
           <label class="form-label col-sm-4" for="id-birthday">誕生日</label>
           <div class="col-sm-8">
             <input type="text" class="form-control" id="id-birthday" name="birthday" placeholder="YYYY/MM/DD">
@@ -64,16 +71,27 @@
         </div>
         <div class="mb-3 row">
           <label class="form-label col-sm-4" for="id-birthday2-y">誕生日2</label>
-          <div class="col-sm-8">
-            <input type="text" class="form-control" id="id-birthday2-y" name="birthday2_y" placeholder="YYY">
-            <input type="text" class="form-control" id="id-birthday2-m" name="birthday2_m" placeholder="MM">
-            <input type="text" class="form-control" id="id-birthday2-d" name="birthday2_d" placeholder="DD">
+          <div class="col-sm-8 row">
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="id-birthday2-y" name="birthday2_y" placeholder="YYY">
+            </div>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="id-birthday2-m" name="birthday2_m" placeholder="MM">
+            </div>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="id-birthday2-d" name="birthday2_d" placeholder="DD">
+            </div>
           </div>
         </div>
         <div class="mb-3 row">
-          <label class="form-label col-sm-4" for="id-email">EMAIL</label>
-          <div class="col-sm-8">
-            <input type="text" class="form-control" id="id-email" name="email" size="64" maxlength="64" placeholder="emailチェック">
+          <label class="form-label col-sm-4" for="id-zip">郵便番号</label>
+          <div class="col-sm-8 row">
+            <div class="col">
+              <input type="text" class="form-control" id="id-zip" name="zip" placeholder="3桁">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" id="id-zip-after" name="zip_after" placeholder="4桁">
+            </div>
           </div>
         </div>
         <div class="mb-3 row">

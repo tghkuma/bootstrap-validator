@@ -1,8 +1,8 @@
-# bootstrap-validator(Bootstrap5/Bootstrap4)
+# bootstrap-validator(Bootstrap5/4)
 
 [![GitHub Super-Linter](https://github.com/tghkuma/bootstrap-validator/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
-このプログラムは、Bootstrap形式のフォーム値のValidateを行う。  
+このプログラムは、Bootstrap5/4形式のフォーム値のValidateを行う。  
 JQueryは利用しない。
 
 ## 書式
@@ -35,7 +35,6 @@ valitetor.validate()
 submit |"validate" | Submit時に行う処理、メソッド文字列 or 関数 or null(何もしない)
 confirm_suffix|"\_confirm" | confirmルールの確認フィールドの接尾語
 zip_suffix | "\_after" |zip_exルールの4桁フィールドの接尾語
-fields | null |各種フィールド定義配列
 errorType| null | "bs4"=Bootstrap4形式でエラーを表示
 clearError | null | エラークリア関数を指定
 setError| null | エラー設定関数を指定
@@ -61,7 +60,7 @@ $("フォーム").formValidate('メソッド名'[,<パラメータ1>[...,<パラ
 メソッド名 |パラメータ| 機能
 --- | --- | ---
 init |オプションオブジェクト| 初期化
-dispError|エラーメッセージ配列| エラー表示処理
+displayError|エラーメッセージ配列| エラー表示処理
 focusError|name| nameフィールドにフォーカス
 clearError|name| nameフィールドのエラークリア.未指定時全てクリア
 setError|name, message| nameフィールドにmessageエラーを表示
