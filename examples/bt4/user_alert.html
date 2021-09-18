@@ -11,26 +11,35 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
 <script type="module">
-  "use strict";
-  import { BootstrapValidator } from "../../js/bootstrap-validator.js"
+  'use strict'
+  import { BootstrapValidator } from '../../js/bootstrap-validator.js'
 
   document.addEventListener('DOMContentLoaded', () => {
     const validator = new BootstrapValidator("form[name='form']", {
-      submit:'validateAlert',
-      fields:[
-        { name:'account', d_name:'アカウント', rules:['required', 'minlength:2', 'hankaku',
-            { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
-        { name:'password', d_name:'パスワード', rules:['required', 'hankaku', 'confirm',
-            ['regexp',[/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]},
-        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
-        { name:'email', d_name:'EMAIL', rules:['email']},
-        { name:'birthday', label:'誕生日', rules:['date']},
-        { name:'birthday2', label:'誕生日2', rules:['ymd']},
-        { name:'zip', label:'郵便番号', rules:['zip_ex']},
-        { name:'comment', d_name:'コメント', rules:['maxlength:16']}
-      ]});
-    validator.form.addEventListener('reset', () => validator.clearError());
-  });
+      submit: 'validateAlert',
+      fields: [
+        {
+          name: 'account',
+          d_name: 'アカウント',
+          rules: ['required', 'minlength:2', 'hankaku',
+            { rule: 'regexp', params: [/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます'] }]
+        },
+        {
+          name: 'password',
+          d_name: 'パスワード',
+          rules: ['required', 'hankaku', 'confirm',
+            ['regexp', [/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]
+        },
+        { name: 'name', d_name: '名前', rules: ['required', 'zenkaku'] },
+        { name: 'email', d_name: 'EMAIL', rules: ['email'] },
+        { name: 'birthday', label: '誕生日', rules: ['date'] },
+        { name: 'birthday2', label: '誕生日2', rules: ['ymd'] },
+        { name: 'zip', label: '郵便番号', rules: ['zip_ex'] },
+        { name: 'comment', d_name: 'コメント', rules: ['maxlength:16'] }
+      ]
+    })
+    validator.form.addEventListener('reset', () => validator.clearError())
+  })
 </script>
 <div class="container">
   <div class="content">

@@ -11,9 +11,8 @@ Validate定義
 Submit時にValidateを行う場合。
 
 ```javascript
-const form = document.querySelector(<form selector>)
-new BootstrapValidator(form, { <オプション>,fields:[
- { name: '<フィールド名1>'[, label: '<フィールド表示名1>'][, rules: <ルール or ルール配列>]},
+new BootstrapValidator(<form selectors|HTMLFormElement>, { <オプション>,fields:[
+ { name: '<フィールド名1>'[, label: '<フィールド表示名1>'][, rules: <ルール or ルール配列>] },
                     :
  { name:'<フィールド名n>', label: '<フィールド表示名n>', rules: <ルール or ルール配列>}
 ]})
@@ -23,7 +22,7 @@ new BootstrapValidator(form, { <オプション>,fields:[
 
 ```javascript
 const form = document.querySelector(<form selector>);
-valitetor = new BootstrapValidator(form, { submit:null,fields:<フィールド定義配列>})
+valitetor = new BootstrapValidator(form, { submit: null, fields: <フィールド定義配列> })
             :
 valitetor.validate()
 ```
@@ -150,9 +149,9 @@ function funcValidate(field, objVal, params){
     var val = objVal.val();
 
     if (val=='abcde')
-        return '「abcde」は使用できません.');
+        return '「abcde」は使用できません.';
     else if(params[0] && val==params[0])
-        return '「'+params[0]+'」は使用できません.');
+        return '「'+params[0]+'」は使用できません.';
     return null;
 }
 ```
@@ -163,17 +162,17 @@ getValidateResultメソッドの戻り値はエラーメッセージは下記構
 
 ```javascript
 [
- { name:  '<フィールド名1>', label: '<フィールド表示名1>', message:'<エラーメッセージ>'},
+ { name:  '<フィールド名1>', label: '<フィールド表示名1>', message: '<エラーメッセージ>' },
                     :
- { name:  '<フィールド名n>', label: '<フィールド表示名n>', message:'<エラーメッセージ>'}
+ { name:  '<フィールド名n>', label: '<フィールド表示名n>', message: '<エラーメッセージ>' }
 ]
 ```
 1フィールドに複数ルールが定義されている等、複数のエラーが出た場合は同じフィールド名で複数のエラーメッセージを返す。
 
 ```javascript
 [
- { name:  'NAME_KANA', label: '名前(かな)', message:'全角ひらがなで入力してください.'},
- { name:  'NAME_KANA', label: '名前(かな)', message:'20文字以下で入力して下さい.'},
+ { name:  'NAME_KANA', label: '名前(かな)', message:'全角ひらがなで入力してください.' },
+ { name:  'NAME_KANA', label: '名前(かな)', message:'20文字以下で入力して下さい.' },
                     :
 ]
 ```
