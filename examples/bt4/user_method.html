@@ -30,8 +30,7 @@
     $('#destroy').on('click', () => {
       if(confirm('Validateを解除すると[登録]クリックしてもValidateしません.よろしいですか?')){
         validator.clearError()
-        // ToDo:validator.destroy()を実装したい
-        validator.settings.submit = null;
+        validator.destroy()
       }
     });
   });

@@ -44,7 +44,19 @@ export class BootstrapValidator {
     this._validExistsFunc = BootstrapValidatorValidExistsFunc
 
     // submitイベント登録
-    this.form.addEventListener('submit', (event) => this.onSubmit(event))
+    this.listenerSubmit = event => this.onSubmit(event)
+    this.form.addEventListener('submit', this.listenerSubmit)
+  }
+
+  /**
+   * 破棄処理
+   * submitイベントを削除する
+   */
+  destroy () {
+    console.log('destroy')
+    // submitイベント削除
+    this.form.removeEventListener('submit', this.listenerSubmit)
+    this.settings.submit = null
   }
 
   /**
