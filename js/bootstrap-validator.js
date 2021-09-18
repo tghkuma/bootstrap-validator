@@ -15,6 +15,7 @@ export class BootstrapValidator {
     /** 初期設定情報 */
     this._settings = {
       submit: 'validate',
+      result: null,
       confirm_suffix: '_confirm',
       zip_suffix: '_after',
       ymd_suffix_y: '_y',
@@ -46,12 +47,20 @@ export class BootstrapValidator {
     this.form.addEventListener('submit', (event) => this.onSubmit(event))
   }
 
+  /**
+   * submit時の処理
+   * @param {Event} event
+   */
   onSubmit (event) {
-    let ret
+    let ret = false
     if (this.settings.submit) {
       this.clearError()
-      if (typeof this.settings.submit === 'string' && typeof this[this.settings.submit] === 'function') {
-        ret = this[this.settings.submit]()
+      if (typeof this.settings.submit === 'string') {
+        if (['validate', 'validateAlert'].indexOf(this.settings.submit) !== -1) {
+          ret = this[this.settings.submit]()
+        } else {
+          console.error('Not exists method [' + this.settings.submit + ']')
+        }
       } else if (typeof this.settings.submit === 'function') {
         ret = this.settings.submit()
       }
