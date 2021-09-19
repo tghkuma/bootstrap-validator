@@ -1,8 +1,9 @@
 {
   "name": "bootstrap-validator",
-  "version": "0.1",
+  "version": "0.8",
   "description": "Bootstrap形式のフォーム値のValidateを行う。",
-  "main": "index.js",
+  "main": "js/bootstrap-validator.js",
+  "module": "js/bootstrap-validator.js",
   "directories": {
     "example": "examples"
   },
@@ -17,15 +18,21 @@
     "test": "eslint js/*.js",
     "jsdoc": "jsdoc js/ -d jsdoc/",
     "compress": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode production --devtool source-map --target umd",
-    "standard": "standard ./js/bootstrap-validator.js",
+    "standard": "standard ./src/**.js",
     "standard:fix": "standard --fix ./js/bootstrap-validator.js",
     "super-lint": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
+  },
+  "standard": {
+    "ignore": [
+      "webpack.config.js",
+      "/js/*.js"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tghkuma/bootstrap-validator.git"
   },
-  "author": "",
+  "author": "Team-Grasshopper Co., Ltd.",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/tghkuma/bootstrap-validator/issues"

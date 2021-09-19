@@ -1,31 +1,6 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else {
-		var a = factory();
-		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
-	}
-})(self, function() {
-return /******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+import { MESSAGES } from './messages/ja.js'
 
-/***/ "./src/bootstrap-validator.js":
-/*!************************************!*\
-  !*** ./src/bootstrap-validator.js ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BootstrapValidator": () => (/* binding */ BootstrapValidator)
-/* harmony export */ });
-/* harmony import */ var _messages_ja_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/ja.js */ "./src/messages/ja.js");
-
-
-class BootstrapValidator {
+export class BootstrapValidator {
   /**
    * コンストラクタ
    * @param form
@@ -47,7 +22,7 @@ class BootstrapValidator {
       setError: null,
       clearError: null,
       /** メッセージ */
-      messages: _messages_ja_js__WEBPACK_IMPORTED_MODULE_0__.MESSAGES
+      messages: MESSAGES
     }
 
     /** option */
@@ -1306,138 +1281,3 @@ class BootstrapValidatorValidExistsFunc {
     return null
   }
 }
-
-
-/***/ }),
-
-/***/ "./src/messages/ja.js":
-/*!****************************!*\
-  !*** ./src/messages/ja.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "MESSAGES": () => (/* binding */ MESSAGES)
-/* harmony export */ });
-const MESSAGES = {
-  VALIDATE_ERROR: '入力に誤りがあります.',
-  // Required
-  REQUIRED: '必須項目です.',
-  REQUIRED_PART: '{0} は必須項目です.',
-  INSUFFICIENT: '不足しています.',
-  INSUFFICIENT_PART: '{0} が不足しています.',
-  CONFIRM: '確認{0}と異なっています.',
-  CONFIRM_FIELD: '項目',
-  // input a numerical value
-  NUMERICAL_VALUE: '数値を入力して下さい.',
-  INTEGER: '整数値を入力して下さい.',
-  INTEGER_PART: '{0} は整数値を入力して下さい.',
-  MIN: '{0} ～ の数値を入力してください.',
-  MAX: '～ {0} の数値を入力してください.',
-  RANGE: '{0} ～ {1} の数値を入力してください.',
-  MIN_LENGTH: '{0}文字以上で入力して下さい.',
-  MAX_LENGTH: '{0}文字以下で入力して下さい.',
-  NUM_LENGTH: '{0}桁の数値を入力してください.',
-  CHECKBOX_MIN: '{0} 個チェックしてください.',
-  CHECKBOX_RANGE: '{0}～{1} 個の間でチェックしてください.',
-  ZENKAKU: '全角で入力してください.',
-  HANKAKU: '半角で入力してください.',
-  ZEN_KANA: '全角カタカナで入力してください.',
-  HIRAGANA: 'ひらがなで入力してください.',
-  TEL: '数値-()で入力してください.',
-  ZIP: '[nnn-nnnn]書式で記述してください.',
-  // 日付系
-  DATE: '[YYYY/MM/DD]書式で記述してください.',
-  DATE_EX: '[YYYY/MM/DD] or [YYYY/MM] or [YYYY]書式で記述してください.',
-  DATETIME: '[YYYY/MM/DD hh:mm:ss]書式で記述してください.',
-  TIME: '[hh:mm:ss]書式で記述してください.',
-  TIME_HM: '[hh:mm:ss]書式で記述してください.',
-  DATE_INVALID: '日付が間違っています.',
-  TIME_INVALID: '時間が間違っています.',
-  DATE_PART_Y: '(年)',
-  DATE_PART_M: '(月)',
-  DATE_PART_D: '(日)',
-  // 正規表現系
-  REGEXP_INVALID_PARAM: '正規表現が間違っています.',
-  REGEXP_INVALID_VALUE: '書式が間違っています.',
-  // メール系
-  MAIL_NO_AT: '正しくありません(@).',
-  MAIL_INVALID_IP: '正しくありません(IP).',
-  MAIL_NO_DOMAIN: 'ドメイン名がありません(DOMAIN).',
-  MAIL_INVALID_LOCALE: '正しくありません(LOCALE).',
-  MAIL_INVALID_DOMAIN: 'ドメイン名の書式が誤っています.',
-  // その他
-  NOT_EXISTS_FIELD: 'フィールド名[{0}]が存在しません.'
-}
-
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	__webpack_require__("./src/messages/ja.js");
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/bootstrap-validator.js");
-/******/ 	
-/******/ 	return __webpack_exports__;
-/******/ })()
-;
-});

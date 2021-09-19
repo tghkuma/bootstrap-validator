@@ -5,6 +5,36 @@
 このプログラムは、Bootstrap5/4形式のフォーム値のValidateを行う。  
 JQueryは利用しない。
 
+## 利用方法
+
+umd版
+
+```javascript
+<script src="<path>/bootstrap-validator.min.js"></script>
+<script>
+  :
+    const validator = new BootstrapValidator(〜)
+  :
+</script>
+```
+
+esm版
+
+```javascript
+<script type="module">
+  'use strict'
+  import { BootstrapValidator } from '<path>/bootstrap-validator.esm.min.js'
+  :
+    const validator = new BootstrapValidator(〜)
+  :
+</script>
+```
+
+### CDN
+
+umd版:`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.min.js`
+esm版:`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.esm.min.js`
+
 ## 書式
 
 Validate定義
@@ -31,14 +61,12 @@ valitetor.validate()
 
 オプション名 | 初期値 | 機能
 --- | --- | ---
-submit |"validate" | Submit時に行う処理、メソッド文字列 or 関数 or null(何もしない)
-confirm_suffix|"\_confirm" | confirmルールの確認フィールドの接尾語
-zip_suffix | "\_after" |zip_exルールの4桁フィールドの接尾語
-errorType| null | "bs4"=Bootstrap4形式でエラーを表示
+submit |'validate' | Submit時に行う処理、メソッド文字列 or 関数 or null(何もしない)
+confirm_suffix|'\_confirm' | confirmルールの確認フィールドの接尾語
+zip_suffix | '\_after' |zip_exルールの4桁フィールドの接尾語
 clearError | null | エラークリア関数を指定
 setError| null | エラー設定関数を指定
 focusError | true | true=エラー時に最初のエラーにフォーカスする<br>メソッド:validate, validateAlertで利用
-focusErrorSpeed | "fast" | フォーカスのスクロール<br>(JQuery animateのduration. "slow","normal","fast"またはミリ秒)<br>JQuery slim版ではanimateは未サポート
 
 ### フィールド定義
 
@@ -53,15 +81,14 @@ rules | Validateルール.<br>1件の場合はルール文字列.複数の場合
 下記の書式でメソッドを実行できる。
 
 ```javascript
-$("フォーム").formValidate('メソッド名'[,<パラメータ1>[...,<パラメータn>]);
+<フォーム変数>.<メソッド名>(?<パラメータ1>,...,?<パラメータn>);
 ```
 
 メソッド名 |パラメータ| 機能
 --- | --- | ---
-init |オプションオブジェクト| 初期化
 displayError|エラーメッセージ配列| エラー表示処理
 focusError|name| nameフィールドにフォーカス
-clearError|name| nameフィールドのエラークリア.未指定時全てクリア
+clearError|name| nameフィールドのエラークリア<br>未指定時全てクリア
 setError|name, message| nameフィールドにmessageエラーを表示
 validate|[オプションオブジェクト]| パラメータチェック<br>戻り値:true=正常, false=エラー
 validateAlert|[オプションオブジェクト]| パラメータチェック<br>エラー時alert()でエラー表示
@@ -72,7 +99,7 @@ getFieldsRules|[オプションオブジェクト]|フォーム内フィール�
 
 ルール名 | パラメータ | 機能
 ---|---|---
-email | _なし_ | E-Mail
+email | _なし_ | EMail
 tel | _なし_ |電話番号
 zenkaku | _なし_ |全角
 hankaku | _なし_ |半角
@@ -94,8 +121,8 @@ zip | _なし_ |郵便番号
 date_ex | _なし_ |日付.<br>[YYYY/MM/DD] or [YYYY/MM] or [YYYY]の書式でチェックする
 regexp|<正規表現>[,<フラグ>[,<エラーメッセージ>]]| 正規表現は文字列か正規表現リテラル(/<正規表現>/)が指定可.<br><フラグ>,<エラーメッセージ>は省略可<br>正規表現リテラルの場合,第2パラメータは<メッセージ>となる
 <関数>|_関数による_|独自Validate関数を実行する
-zip_ex | _なし_ |(※)郵便番号.<br>nameとname+"\_after"の2か所をチェック
-ymd | ['required'] | (※)年月日.<br>name+"\_Y", name+"\_M", name+"\_D"の３か所をチェック<br>パラメータ `required` の時は必須チェックも行う。
+zip_ex | _なし_ |(※)郵便番号.<br>nameとname+'\_after'の2か所をチェック
+ymd | ['required'] | (※)年月日.<br>name+'\_y', name+'\_m', name+'\_d'の３か所をチェック<br>パラメータ `required` の時は必須チェックも行う。
 
 (※)バリデーション機能はあるが、Bootstrapでのエラー表示ができない。  
 Alert,独自エラー表示では対応可能。
@@ -127,7 +154,7 @@ Alert,独自エラー表示では対応可能。
 但し、正規表現の様にパラメータ中に「,」が必要な場合は、パラメータをJSON形式に変換して定義する。
 
 ```plaintext
-'regexp:'+JSON.stringify(["^[a-z\\d,-_]+?$",'gi',"入力可能文字は英数字,-_です"])
+'regexp:'+JSON.stringify(['^[a-z\\d,-_]+?$','gi','入力可能文字は英数字,-_です'])
 ```
 
 ### 独自Validate関数
@@ -135,22 +162,23 @@ Alert,独自エラー表示では対応可能。
 下記書式で実装する
 
 ```javascript
-/*
-* サンプル関数
-* @param string field フィールド名
-* @param object objVal 値
-* @param array params パラメータ配列(オプション)
-*
-* @return null|string Validate結果
-*         null:正常
-*         string:エラー
-*/
-function funcValidate(field, objVal, params){
-    var val = objVal.val();
-
+/**
+ * サンプル関数
+ * 値が'abcde'かエラー値の時エラー
+ * @param {object} field フィールド
+ * @param {NodeList} ndValues セレクタNodeList
+ * @param {array} [params] ルールパラメータ
+ * @param {string} params[0] エラー値
+ * @param {BootstrapValidator} [v] validatorインスタンス
+ * @returns {string|null} Validate結果
+ *         null:正常
+ *         string:エラー
+ */
+function funcValidate (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
     if (val=='abcde')
         return '「abcde」は使用できません.';
-    else if(params[0] && val==params[0])
+    else if (params[0] && val === params[0])
         return '「'+params[0]+'」は使用できません.';
     return null;
 }
@@ -187,18 +215,18 @@ getValidateResultメソッドの戻り値はエラーメッセージは下記構
 属性|ルール,パラメータ | 尾行
 ---|---|---
 required|'required'|
-minlength="<最小文字列>"|['minlength',<最小文字列>]|
-maxlength="<最大文字列>"|['maxlength',<最大文字列>|
-min="<最小値>"| ['min', <最小値>|
-max="<最大値>"| ['max', <最大値>]|
-pattern="<正規表現>"|['regexp','<正規表現>']|
-type="number"|'numeric'|
-type="email"|'email'|
-type="tel"|'tel'|
-type="date"|'date'|
-type="time"|['time','hm']|日時属性のみ
-type="radio" required|'required'|最初のフィールドのみ指定可
-type="checkbox" required|'required'|最初のフィールドのみ指定可
+minlength='<最小文字列>'|['minlength',<最小文字列>]|
+maxlength='<最大文字列>'|['maxlength',<最大文字列>]|
+min='<最小値>'| ['min', <最小値>]|
+max='<最大値>'| ['max', <最大値>]|
+pattern='<正規表現>'|['regexp','<正規表現>']|
+type='number'|'numeric'|
+type='email'|'email'|
+type='tel'|'tel'|
+type='date'|'date'|
+type='time'|['time','hm']|日時属性のみ
+type='radio' required|'required'|最初のフィールドのみ指定可
+type='checkbox' required|'required'|最初のフィールドのみ指定可
 
 ## 制限
 
@@ -219,7 +247,6 @@ html5の `<input type="number" 〜>` を使用して数値以外を入力した�
 ---|---|---
 Firefox/Safari/Edge|入力値は存在するが、Javascript値が空になる|ブラウザの「validity.badInput」で判定し「validationMessage」を返す
 Chrome|そもそも入力できない|未入力扱い
-Internet Explorer 11|フォーカスが無くなった時、入力値が空になる|未入力扱い
 
 ### Bootstrapレイアウトでエラー表示されないルール
 
@@ -230,12 +257,8 @@ Alert,独自エラー表示では対応可能。
 ## build(minify)手順
 
 ```shell
-npm run compress
+webpack
 ```
-
-### CDN
-
-`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.1/js/bootstrap-validator.min.js`
 
 ## Copyright
 
