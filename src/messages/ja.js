@@ -1,3 +1,7 @@
+/**
+ * メッセージ定義
+ * @type {{ZIP: string, MAIL_INVALID_DOMAIN: string, REGEXP_INVALID_PARAM: string, INTEGER_PART: string, MAX: string, DATE_PART_Y: string, INSUFFICIENT: string, DATE_PART_M: string, NUMERICAL_VALUE: string, CHECKBOX_RANGE: string, TIME_HM: string, NOT_EXISTS_FIELD: string, TIME_INVALID: string, DATE_PART_D: string, REGEXP_INVALID_VALUE: string, MIN_LENGTH: string, MAIL_INVALID_IP: string, CONFIRM: string, CHECKBOX_MIN: string, MAIL_INVALID_LOCALE: string, ZENKAKU: string, INTEGER: string, VALIDATE_ERROR: string, HIRAGANA: string, CONFIRM_FIELD: string, REQUIRED_PART: string, REQUIRED: string, ZEN_KANA: string, TIME: string, HANKAKU: string, MAX_LENGTH: string, MAIL_NO_DOMAIN: string, DATE: string, DATE_INVALID: string, MIN: string, DATETIME: string, DATE_EX: string, TEL: string, MAIL_NO_AT: string, NUM_LENGTH: string, INSUFFICIENT_PART: string, RANGE: string}}
+ */
 export const MESSAGES = {
   VALIDATE_ERROR: '入力に誤りがあります.',
   // Required

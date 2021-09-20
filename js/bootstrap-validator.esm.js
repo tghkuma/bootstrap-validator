@@ -13,11 +13,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _messages_ja_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/ja.js */ "./src/messages/ja.js");
 
 
+/**
+ * Bootstrapレイアウトバリデーション
+ */
 class BootstrapValidator {
   /**
    * コンストラクタ
-   * @param form
-   * @param [options]
+   * @constructor
+   * @param {HTMLElement} form フォームNode
+   * @param {Object} [options] 設定オプション
    */
   constructor (form, options) {
     /** フォームElement */
@@ -138,7 +142,8 @@ class BootstrapValidator {
   }
 
   /**
-   * @param {string} name
+   * selector名からNodeListを取得
+   * @param {string} name selector名
    * @return {NodeList}
    */
   querySelectorByName (name) {
@@ -458,6 +463,9 @@ class BootstrapValidator {
   }
 }
 
+/**
+ * 補助処理群
+ */
 class BootstrapValidatorHelpers {
   /**
    * フィールドから値を取得
@@ -748,11 +756,14 @@ class BootstrapValidatorHelpers {
   };
 }
 
+/**
+ * バリデーション関数群(値なし)
+ */
 class BootstrapValidatorValidFunc {
   /**
    * 数値チェック(値なし)
    * @param {object} field フィールド
-   * @param {NodeList<HTMLInputElement>} ndValues セレクタNodeList
+   * @param {NodeList<HTMLInputElement>} ndValues 値NodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
@@ -768,10 +779,10 @@ class BootstrapValidatorValidFunc {
   /**
    * チェックボックス
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params[0] 最小選択数
-   * @param {string|number} params[1] 最大選択数
+   * @param {string|number} params.0 最小選択数
+   * @param {string|number} params.1 最大選択数
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -794,7 +805,7 @@ class BootstrapValidatorValidFunc {
    * 郵便番号の4桁部分が入力された場合
    * 3桁部が入力必須になるチェック
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {array} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
@@ -813,9 +824,9 @@ class BootstrapValidatorValidFunc {
    * フォーム name+"_y", name+"_m", name+"_d"のチェックを行う
    * 3桁部が入力必須になるチェック
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {array} params ルールパラメータ
-   * @param {string} params[0] 'required':必須チェック
+   * @param {string} params.0 'required':必須チェック
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string[]|null} エラーメッセージ(正常時null)
    */
@@ -893,12 +904,15 @@ class BootstrapValidatorValidFunc {
   }
 }
 
+/**
+ * バリデーション関数群(値あり)
+ */
 class BootstrapValidatorValidExistsFunc {
   /**
    * 確認項目
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -916,8 +930,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * E-Mailチェック
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -935,8 +949,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 全角
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -950,8 +964,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 半角
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -965,8 +979,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 全角カタカナ
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -981,8 +995,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 全角ひらがな
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -996,8 +1010,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 電話番号
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1011,8 +1025,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 数値チェック
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {array} [params] ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1028,9 +1042,9 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 最小文字数
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params[0] 文字数
+   * @param {string|number} params.0 文字数
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1043,9 +1057,9 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 最大文字数
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params[0] 文字数
+   * @param {string|number} params.0 文字数
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1058,10 +1072,10 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 数値桁数チェック
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params[0] 最小桁数
-   * @param {string|number} params[1] 最大桁数
+   * @param {string|number} params.0 最小桁数
+   * @param {string|number} params.1 最大桁数
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1083,9 +1097,9 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 最小値
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params[0] 最小値
+   * @param {string|number} params.0 最小値
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1102,9 +1116,9 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 最大値
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params[0] 最大値
+   * @param {string|number} params.0 最大値
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1121,10 +1135,10 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 数値範囲
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params[0] 最小値
-   * @param {string|number} params[1] 最大値
+   * @param {string|number} params.0 最小値
+   * @param {string|number} params.1 最大値
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1142,8 +1156,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 日付
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {Array<string|number>} params ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1166,8 +1180,8 @@ class BootstrapValidatorValidExistsFunc {
    * 日時チェック
    * [YYYY-MM-DD hh:mm:ss]または[YYYY/MM/DD]の書式でチェックする
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {Array<string|number>} params ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1193,8 +1207,8 @@ class BootstrapValidatorValidExistsFunc {
    * 日付チェック
    * [YYYY/MM/DD] or [YYYY/MM] or [YYYY]の書式でチェックする
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {Array<string|number>} params ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1221,8 +1235,9 @@ class BootstrapValidatorValidExistsFunc {
    * 時間チェック
    * [hh:mm:ss]の書式でチェックする
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
+   * @param {string} params.0 'hm' [hh:mm]の書式でチェックする
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1249,8 +1264,8 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 郵便番号
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
-   * @param {Array<string|number>} params ルールパラメータ
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
@@ -1265,10 +1280,10 @@ class BootstrapValidatorValidExistsFunc {
   /**
    * 正規表現チェック
    * @param {object} field フィールド
-   * @param {NodeList} ndValues セレクタNodeList
+   * @param {NodeList} ndValues 値NodeList
    * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|RegExp} params[0] 正規表現(文字列 or 正規表現クラス)
-   * @param {string} params[1] 正規表現フラグ(オプション)
+   * @param {string|RegExp} params.0 正規表現(文字列 or 正規表現クラス)
+   * @param {string} params.1 正規表現フラグ(オプション)
    * @param {string} params.{1|2} エラーメッセージ(オプション)
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
@@ -1308,6 +1323,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MESSAGES": () => (/* binding */ MESSAGES)
 /* harmony export */ });
+/**
+ * メッセージ定義
+ * @type {{ZIP: string, MAIL_INVALID_DOMAIN: string, REGEXP_INVALID_PARAM: string, INTEGER_PART: string, MAX: string, DATE_PART_Y: string, INSUFFICIENT: string, DATE_PART_M: string, NUMERICAL_VALUE: string, CHECKBOX_RANGE: string, TIME_HM: string, NOT_EXISTS_FIELD: string, TIME_INVALID: string, DATE_PART_D: string, REGEXP_INVALID_VALUE: string, MIN_LENGTH: string, MAIL_INVALID_IP: string, CONFIRM: string, CHECKBOX_MIN: string, MAIL_INVALID_LOCALE: string, ZENKAKU: string, INTEGER: string, VALIDATE_ERROR: string, HIRAGANA: string, CONFIRM_FIELD: string, REQUIRED_PART: string, REQUIRED: string, ZEN_KANA: string, TIME: string, HANKAKU: string, MAX_LENGTH: string, MAIL_NO_DOMAIN: string, DATE: string, DATE_INVALID: string, MIN: string, DATETIME: string, DATE_EX: string, TEL: string, MAIL_NO_AT: string, NUM_LENGTH: string, INSUFFICIENT_PART: string, RANGE: string}}
+ */
 const MESSAGES = {
   VALIDATE_ERROR: '入力に誤りがあります.',
   // Required
