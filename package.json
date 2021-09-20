@@ -20,7 +20,7 @@
     "compress": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode production --devtool source-map --target umd",
     "standard": "standard ./src/**.js",
     "standard:fix": "standard --fix ./js/bootstrap-validator.js",
-    "super-lint": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
+    "super-linter": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
   },
   "standard": {
     "ignore": [
