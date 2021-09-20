@@ -39,7 +39,7 @@
   "use strict";
   import {BootstrapValidator} from "https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.esm.min.js";
 
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener('DOMContentLoaded', function() {
     // MaterialDesignコンポーネント初期化
     const textFields = {};
     document.querySelectorAll('.mdc-text-field')
@@ -48,9 +48,7 @@
       textField.useNativeValidation = false
       textFields[textField.input.name] = textField;
     });
-    document.querySelectorAll('.mdc-tooltip, .mdc-icon-button, .mdc-card__primary-action')
-      .forEach(tooltip => mdc.tooltip.MDCTooltip.attachTo(tooltip));
-    document.querySelectorAll('.mdc-button, .mdc-icon-button, .mdc-card__primary-action')
+    document.querySelectorAll('.mdc-button')
       .forEach(el => mdc.ripple.MDCRipple.attachTo(el));
 
     const form = document.querySelector("form[name='form']")
@@ -152,7 +150,7 @@
             <span class="mdc-line-ripple"></span>
           </label>
           <div class="mdc-text-field-helper-line">
-            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent" id="id_comment-helper" aria-hidden="true">エラーじゃないコメント。これは消されない。</div>
+            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent" id="id_comment-helper" aria-hidden="true">最大文字数16文字</div>
           </div>
         </div>
         <div class="mdc-card__actions">

@@ -1,6 +1,6 @@
 {
   "name": "bootstrap-validator",
-  "version": "0.8",
+  "version": "0.8.1",
   "description": "Bootstrap形式のフォーム値のValidateを行う。",
   "main": "js/bootstrap-validator.js",
   "module": "js/bootstrap-validator.js",
@@ -16,8 +16,7 @@
   },
   "scripts": {
     "test": "eslint js/*.js",
-    "jsdoc": "jsdoc js/ -d jsdoc/",
-    "compress": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode production --devtool source-map --target umd",
+    "jsdoc": "jsdoc src -d jsdoc/",
     "standard": "standard ./src/**.js",
     "standard:fix": "standard --fix ./js/bootstrap-validator.js",
     "super-linter": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
