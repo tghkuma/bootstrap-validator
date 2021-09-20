@@ -1,9 +1,16 @@
 # bootstrap-validator(Bootstrap5/4)
 
 [![GitHub Super-Linter](https://github.com/tghkuma/bootstrap-validator/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![jsDelivr](https://data.jsdelivr.com/v1/package/gh/tghkuma/bootstrap-validator/badge)](https://www.jsdelivr.com/package/gh/tghkuma/bootstrap-validator)
 
 このプログラムは、Bootstrap5/4形式のフォーム値のValidateを行う。  
 JQueryは利用しない。
+
+## Getting Started
+
+* [Github](https://github.com/tghkuma/bootstrap-validator)
+* CDN(umd版):`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.min.js`
+* CDN(esm版):`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.esm.min.js`
 
 ## 利用方法
 
@@ -29,11 +36,6 @@ esm版
   :
 </script>
 ```
-
-### CDN
-
-umd版:`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.min.js`
-esm版:`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.esm.min.js`
 
 ## 書式
 
