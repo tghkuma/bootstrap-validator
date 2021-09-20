@@ -10,20 +10,34 @@
 <body>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-<script src="../js/jquery.btfw.form_validate.js"></script>
-<script>
-  $(function() {
-    $("form[name=form]").formValidate({ fields:[
-        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
-        { name:'birthday', d_name:'日付', rules:['date']}
-      ]});
-    $("form[name=form2]").formValidate({ fields:[
-        { name:'account', d_name:'アカウント', rules:['required', 'minlength:2', 'hankaku',
-            { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
-        { name:'password', d_name:'パスワード', rules:['required', 'hankaku', 'confirm',
-            ['regexp',[/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]}
-      ]});
-  });
+<script type="module">
+  'use strict'
+  import { BootstrapValidator } from '../../js/bootstrap-validator.esm.js'
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new BootstrapValidator("form[name='form']", {
+      fields: [
+        { name: 'name', d_name: '名前', rules: ['required', 'zenkaku'] },
+        { name: 'birthday', d_name: '日付', rules: ['date'] }
+      ]
+    })
+    new BootstrapValidator("form[name='form2']", {
+      fields: [
+        {
+          name: 'account',
+          d_name: 'アカウント',
+          rules: ['required', 'minlength:2', 'hankaku',
+            { rule: 'regexp', params: [/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます'] }]
+        },
+        {
+          name: 'password',
+          d_name: 'パスワード',
+          rules: ['required', 'hankaku', 'confirm',
+            ['regexp', [/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]
+        }
+      ]
+    })
+  })
 </script>
 <div class="container">
   <div class="content">

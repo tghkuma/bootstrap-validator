@@ -1,8 +1,9 @@
 {
-  "name": "jquery.form_validate_btfw",
-  "version": "1.8.1",
+  "name": "bootstrap-validator",
+  "version": "0.8.1",
   "description": "Bootstrap形式のフォーム値のValidateを行う。",
-  "main": "index.js",
+  "main": "js/bootstrap-validator.js",
+  "module": "js/bootstrap-validator.js",
   "directories": {
     "example": "examples"
   },
@@ -15,20 +16,25 @@
   },
   "scripts": {
     "test": "eslint js/*.js",
-    "jsdoc": "jsdoc js/ -d jsdoc/",
-    "compress": "webpack --entry ./js/bootstrap-validator.js --output-path ./js --output-filename bootstrap-validator.min.js --mode=\"production\" --devtool source-map",
-    "standard": "standard ./js/bootstrap-validator.js",
+    "jsdoc": "jsdoc src -d jsdoc/",
+    "standard": "standard ./src/**.js",
     "standard:fix": "standard --fix ./js/bootstrap-validator.js",
-    "super-lint": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
+    "super-linter": "docker run -e RUN_LOCAL=true -v `pwd`:/tmp/lint github/super-linter"
+  },
+  "standard": {
+    "ignore": [
+      "webpack.config.js",
+      "/js/*.js"
+    ]
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tghkuma/jquery.form_validate_btfw.git"
+    "url": "git+https://github.com/tghkuma/bootstrap-validator.git"
   },
-  "author": "",
+  "author": "Team-Grasshopper Co., Ltd.",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tghkuma/jquery.form_validate_btfw/issues"
+    "url": "https://github.com/tghkuma/bootstrap-validator/issues"
   },
-  "homepage": "https://github.com/tghkuma/jquery.form_validate_btfw#readme"
+  "homepage": "https://github.com/tghkuma/bootstrap-validator#readme"
 }

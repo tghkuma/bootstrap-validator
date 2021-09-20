@@ -10,52 +10,64 @@
 <body>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-<script src="../js/jquery.btfw.form_validate.js"></script>
-<script>
-  $(function() {
-    let $form = $("form[name=form]");
-    let $alert = $("#id-alert");
+<script type="module">
+  'use strict'
+  import { BootstrapValidator } from '../../js/bootstrap-validator.esm.js'
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const $alert = $('#id-alert')
 
     // エラー結果取得
-    let funcDispError = function() {
-      let errors = $form.formValidate('getValidateResult');
+    const funcDispError = function () {
+      const errors = validator.getValidateResult()
       if (errors.length > 0) {
-        let alert = [];
-        errors.forEach (function(error){
+        const alerts = []
+        errors.forEach(function (error) {
           /**
            *  @namespace error.name フィールド名
            *  @namespace error.d_name フィールド表示名
            *  @namespace error.message エラーメッセージ
            */
-          alert.push((error.d_name ? error.d_name: error.name)+' : '+error.message);
-        });
-        $alert.html(alert.join('<br>'));
-        $alert.show();
-        return false;
+          alerts.push((error.d_name ? error.d_name : error.name) + ' : ' + error.message)
+        })
+        $alert.html(alerts.join('<br>'))
+        $alert.show()
+        return false
       }
-    };
-    // エラー結果クリア
-    let funcClearError = function() {
-      $alert.text(null);
-      $alert.hide();
-    };
+    }
 
-    $form.formValidate({ submit: funcDispError,
+    // エラー結果クリア
+    const funcClearError = function () {
+      $alert.text(null)
+      $alert.hide()
+    }
+
+    const validator = new BootstrapValidator('form[name=form]', {
+      submit: funcDispError,
       clearError: funcClearError,
-      fields:[
-        { name:'account', d_name:'アカウント', rules:['required', 'minlength:2', 'hankaku',
-            { rule:'regexp', params:[/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます']}]},
-        { name:'password', d_name:'パスワード', rules:['required', 'hankaku', 'confirm',
-            ['regexp',[/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]},
-        { name:'name', d_name:'名前', rules:['required', 'zenkaku']},
-        { name:'email', d_name:'EMAIL', rules:['email']},
-        { name:'birthday', d_name:'日付', rules:['date']},
-        { name:'comment', d_name:'コメント', rules:['maxlength:16']}
-      ]});
-    $('#clear-error').on('click', function () {
-      $form.formValidate('clearError');
-    });
-  });
+      fields: [
+        {
+          name: 'account',
+          d_name: 'アカウント',
+          rules: ['required', 'minlength:2', 'hankaku',
+            { rule: 'regexp', params: [/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます'] }]
+        },
+        {
+          name: 'password',
+          d_name: 'パスワード',
+          rules: ['required', 'hankaku', 'confirm',
+            ['regexp', [/^[A-Z\d]*$/i, '英数字のみ使用出来ます']]]
+        },
+        { name: 'name', d_name: '名前', rules: ['required', 'zenkaku'] },
+        { name: 'email', d_name: 'EMAIL', rules: ['email'] },
+        { name: 'birthday', d_name: '日付', rules: ['date'] },
+        { name: 'comment', d_name: 'コメント', rules: ['maxlength:16'] }
+      ]
+    })
+
+    validator.form.addEventListener('reset', () => validator.clearError())
+    document.querySelector('#clear-error').addEventListener('click', () => validator.clearError())
+  })
 </script>
 <div class="container">
   <div class="content">

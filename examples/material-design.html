@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ja_JP">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <meta charset="UTF-8">
+  <title>Material Design版</title>
+  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    .form-field + .form-field {
+      margin-top: 1rem;
+    }
+
+    .form-card-buttons {
+      margin: 0 auto;
+    }
+    .form-card-buttons button + button {
+      margin-left: 1rem;
+    }
+
+    .form-card {
+      width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-card__caption {
+      padding: 0 1rem;
+    }
+
+    .form-card__body {
+      padding: 1rem;
+      color: rgba(0,0,0,.54);
+    }
+  </style>
+</head>
+<body>
+<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+<script type="module">
+  "use strict";
+  import {BootstrapValidator} from "https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.esm.min.js";
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // MaterialDesignコンポーネント初期化
+    const textFields = {};
+    document.querySelectorAll('.mdc-text-field')
+    .forEach(el => {
+      const textField = mdc.textField.MDCTextField.attachTo(el);
+      textField.useNativeValidation = false
+      textFields[textField.input.name] = textField;
+    });
+    document.querySelectorAll('.mdc-button')
+      .forEach(el => mdc.ripple.MDCRipple.attachTo(el));
+
+    const form = document.querySelector("form[name='form']")
+
+    /**
+     * エラークリア処理
+     * (MaterialDesignレイアウト)
+     * @param {string} [name] 項目名
+     */
+    const clearError = function (name) {
+      if (name) {
+        const mdcTextField = textFields[name];
+        mdcTextField.valid = true;
+        mdcTextField
+        .input.closest('.mdc-text-field')
+        .parentElement.querySelectorAll('.mdc-text-field-helper-text--validation-msg')
+        .forEach(el => el.parentElement.remove());
+      } else {
+        Object.entries(textFields).forEach(([name, mdcTextField]) => {
+          mdcTextField.valid = true;
+        });
+        form.querySelectorAll('.mdc-text-field-helper-text--validation-msg')
+        .forEach(el => el.parentElement.remove());
+      }
+    }
+
+    /**
+     * 指定箇所エラー表示処理
+     * (MaterialDesignレイアウト)
+     * @param {string} name 項目名
+     * @param {string} message エラー文言
+     */
+    const setError = function (name, message) {
+      const mdcTextField = textFields[name];
+      mdcTextField.valid = false;
+
+      const errDiv = document.createElement('div');
+      errDiv.className = 'mdc-text-field-helper-line';
+      errDiv.innerHTML = '<div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg">' + message + '</div>';
+      const rootEl = mdcTextField.root;
+      rootEl.parentNode.insertBefore(errDiv, rootEl.nextElementSibling);
+    }
+
+    const validator = new BootstrapValidator(form, {
+      clearError: clearError,
+      setError: setError,
+      fields:[
+        {
+          name: 'account',
+          label: 'アカウント',
+          rules: ['required', 'minlength:2', 'hankaku',
+            { rule: 'regexp', params: [/^[A-Z\d_-]*$/i, '英数字_-のみ使用出来ます'] }]
+        },
+        { name: 'email', label: 'EMAIL', rules: ['email'] },
+        { name: 'comment', label: 'コメント', rules: ['maxlength:16'] }
+      ]
+    })
+
+    // リセット処理
+    validator.form.addEventListener('reset', function(){
+      validator.clearError();
+    });
+  });
+</script>
+<div class="container">
+  <form name="form" novalidate>
+    <div class="mdc-card form-card">
+      <div class="form-card__caption">
+        <h2 class="form-card__title mdc-typography mdc-typography--headline5">Material Design版</h2>
+      </div>
+      <div class="form-card__body">
+        <div class="form-field">
+          <label class="mdc-text-field mdc-text-field--filled">
+            <span class="mdc-text-field__ripple"></span>
+            <span class="mdc-floating-label">アカウント</span>
+            <input class="mdc-text-field__input" type="text" size="80" name="account">
+            <span class="mdc-line-ripple"></span>
+          </label>
+        </div>
+        <div class="form-field">
+          <label class="mdc-text-field mdc-text-field--filled">
+            <span class="mdc-text-field__ripple"></span>
+            <span class="mdc-floating-label">EMail</span>
+            <input class="mdc-text-field__input" type="text" size="80" name="email">
+            <span class="mdc-line-ripple"></span>
+          </label>
+        </div>
+        <div class="form-field">
+          <label class="mdc-text-field mdc-text-field--textarea mdc-text-field--filled">
+            <span class="mdc-text-field__ripple"></span>
+            <span class="mdc-floating-label" id="id_comment">コメント</span>
+            <span class="mdc-text-field__resizer">
+              <textarea class="mdc-text-field__input"
+                        aria-labelledby="id_comment"
+                        aria-controls="id_comment-helper"
+                        aria-describedby="id_comment-helper"
+                        rows="4" cols="60" aria-label="Label" name="comment"></textarea>
+            </span>
+            <span class="mdc-line-ripple"></span>
+          </label>
+          <div class="mdc-text-field-helper-line">
+            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent" id="id_comment-helper" aria-hidden="true">最大文字数16文字</div>
+          </div>
+        </div>
+        <div class="mdc-card__actions">
+          <div class="mdc-card__action-buttons form-card-buttons">
+            <button type="submit" class="mdc-button mdc-button--raised">
+              <span class="mdc-button__ripple"></span>
+              <span class="mdc-button__label">登録</span>
+            </button>
+            <button type="reset" class="mdc-button mdc-button--outlined">
+              <span class="mdc-button__ripple"></span>
+              <span class="mdc-button__label">リセット</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+<!-- /.container --></div>
+</body>
+</html>
