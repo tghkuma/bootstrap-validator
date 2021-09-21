@@ -107,13 +107,13 @@ zenkaku | _なし_ |全角
 hankaku | _なし_ |半角
 zen_katakana | _なし_ |全角カタカナ
 hiragana | _なし_ |全角ひらがな
-minlength|<数値>|最小文字数
-maxlength|<数値>|最大文字数
-numlength|<数値>[,<数値>]|最小文字数[最小～最大文字数]
+minlength|<最小文字数>|最小文字数
+maxlength|<最大文字数>|最大文字数
+numlength|<最小文字数>[,<最大文字数>]|最小文字数[最小～最大文字数]
 numeric | _なし_ | 数値
 number | _なし_ | numericのエイリアス
-min|<数値>|最小値
-max|<数値>|最大値
+min|<最小値>|最小値
+max|<最大値>|最大値
 checkbox|<最少選択数>[,<最大選択数>]| チェックボックスの選択チェック
 range|<最小値>,<最大値>|数値範囲
 date | _なし_ |日付
@@ -210,15 +210,15 @@ getValidateResultメソッドの戻り値はエラーメッセージは下記構
 ## HTML5バリデーション準拠
 
 `fields` を指定しないと、指定フォームの[HTMLFormControlsCollection](https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#htmlformcontrolscollection) と入力フォームのHTML5準拠バリデーションルールから自動生成する。  
-受動で生成する場合、`getFieldsRules` メソッドを使用する。
+手動で生成する場合、`getFieldsRules` メソッドを使用する。
 
 対応しているバリデーションは下記の通り
 
 属性|ルール,パラメータ | 尾行
 ---|---|---
 required|'required'|
-minlength='<最小文字列>'|['minlength',<最小文字列>]|
-maxlength='<最大文字列>'|['maxlength',<最大文字列>]|
+minlength='<最小文字数>'|['minlength',<最小文字数>]|
+maxlength='<最大文字数>'|['maxlength',<最大文字数>]|
 min='<最小値>'| ['min', <最小値>]|
 max='<最大値>'| ['max', <最大値>]|
 pattern='<正規表現>'|['regexp','<正規表現>']|
@@ -256,7 +256,7 @@ Chrome|そもそも入力できない|未入力扱い
 Alert,独自エラー表示では対応可能。  
 過去互換性のために残しているが、 `zip` , `date` の利用を推奨する。
 
-## build(minify)手順
+## build手順
 
 ```shell
 webpack
