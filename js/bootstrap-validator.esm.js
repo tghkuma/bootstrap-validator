@@ -74,7 +74,6 @@ class BootstrapValidator {
    * submitイベントを削除する
    */
   destroy () {
-    console.log('destroy')
     // submitイベント削除
     this.form.removeEventListener('submit', this.listenerSubmit)
     this.settings.submit = null
@@ -87,7 +86,6 @@ class BootstrapValidator {
   onSubmit (event) {
     let ret = false
     if (this.settings.submit) {
-      this.clearError()
       if (typeof this.settings.submit === 'string') {
         if (['validate', 'validateAlert'].indexOf(this.settings.submit) !== -1) {
           ret = this[this.settings.submit]()
@@ -265,6 +263,7 @@ class BootstrapValidator {
    */
   validate (options) {
     let result = true
+    this.clearError()
     const errors = this.getValidateResult(options)
     if (errors.length > 0) {
       this.displayError(errors)

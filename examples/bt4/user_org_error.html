@@ -17,8 +17,9 @@
   document.addEventListener('DOMContentLoaded', () => {
     const $alert = $('#id-alert')
 
-    // エラー結果取得
+    // エラー結果表示
     const funcDispError = function () {
+      validator.clearError()
       const errors = validator.getValidateResult()
       if (errors.length > 0) {
         const alerts = []
