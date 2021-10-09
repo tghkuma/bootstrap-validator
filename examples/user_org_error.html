@@ -16,8 +16,9 @@
   document.addEventListener('DOMContentLoaded', () => {
     const ndAlert = document.querySelector('#id-alert')
 
-    // エラー結果取得
-    const funcDispError = function () {
+    // エラー結果表示
+    const funcDisplayError = function () {
+      validator.clearError()
       const errors = validator.getValidateResult()
       if (errors.length > 0) {
         const alerts = []
@@ -42,7 +43,7 @@
     }
 
     const validator = new BootstrapValidator('form[name=form]', {
-      submit: funcDispError,
+      submit: funcDisplayError,
       clearError: funcClearError,
       fields: [
         {
