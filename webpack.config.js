@@ -2,7 +2,9 @@ const path = require('path');
 const entry = {
   'bootstrap-validator': [
     './src/messages/ja.js',
-    './src/bootstrap-validator.js'
+    './src/bootstrap-validator-valid-func.js',
+    './src/bootstrap-validator-valid-exists-func.js',
+    './src/bootstrap-validator.js',
   ],
 };
 const umdConfig = {
