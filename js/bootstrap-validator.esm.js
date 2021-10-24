@@ -1,5 +1,895 @@
 /******/ var __webpack_modules__ = ({
 
+/***/ "./src/bootstrap-validator-helpers.js":
+/*!********************************************!*\
+  !*** ./src/bootstrap-validator-helpers.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BootstrapValidatorHelpers": () => (/* binding */ BootstrapValidatorHelpers)
+/* harmony export */ });
+/**
+ * 補助処理群
+ */
+class BootstrapValidatorHelpers {
+  /**
+   * フィールドから値を取得
+   * @param {NodeList} ndValues NodeList
+   * @return {string} 値
+   */
+  static getValue (ndValues) {
+    const type = ndValues[0].attributes.type ? ndValues[0].attributes.type.value : null
+    let val
+    if (type === 'radio') {
+      ndValues.forEach(el => {
+        if (el.checked) {
+          val = el.value
+          return true
+        }
+      })
+    } else if (type !== 'checkbox') {
+      val = ndValues[0].value
+    } else {
+      val = []
+      ndValues.forEach(el => {
+        if (el.checked) {
+          val.push(el.value)
+        }
+      })
+    }
+    return val
+  }
+
+  /**
+   * 値が入力されているか？
+   * @param {NodeList} ndValues NodeList
+   * @return {boolean} true:入力, false:未入力
+   */
+  static existsValue (ndValues) {
+    if (!ndValues || ndValues.length === 0) {
+      return false
+    }
+    let ret
+    const type = ndValues[0].attributes.type ? ndValues[0].attributes.type.value : null
+    if (type === 'checkbox') {
+      ret = false
+      ndValues.forEach(el => {
+        if (el.checked) {
+          ret = true
+          return true
+        }
+      })
+    } else {
+      ret = !!this.getValue(ndValues)
+    }
+    return ret
+  }
+
+  /**
+   * エラー配列付加
+   * @param {string[]|Object[]} arrErrors エラー情報配列
+   * @param {Object} field    フィールド情報
+   * @param {string|string[]} errors 追加エラー情報
+   * @return {string[]|Object[]} array arrErrors
+   */
+  static pushErrors (arrErrors, field, errors) {
+    const label = field.label ? field.label : field.name
+    if (typeof errors === 'string' && errors) {
+      arrErrors.push({ name: field.name, label: label, message: errors })
+    } else if (Array.isArray(errors)) {
+      errors.forEach(error => {
+        arrErrors.push({ name: field.name, label: label, message: error })
+      })
+    }
+    return arrErrors
+  }
+
+  /**
+   * エラーメッセージを返す
+   * @param {string[]|Object[]} arrErrors エラー情報配列
+   * @param {?string} delimiter デリミタ
+   * @returns {string} エラーメッセージ
+   */
+  static join (arrErrors, delimiter) {
+    if (delimiter === undefined) delimiter = '\n'
+    const arrErrorMessages = []
+    arrErrors.forEach((error) => {
+      if (typeof error === 'string' && error) {
+        arrErrorMessages.push(error)
+      } else {
+        // -----------------------
+        // エラー情報追加
+        // error.name フィールド名
+        // error.d_name フィールド表示名
+        // error.message エラーメッセージ
+        // -----------------------
+        arrErrorMessages.push((error.label ? error.label : error.name) + ' : ' + error.message)
+      }
+    })
+    return arrErrorMessages.join(delimiter)
+  }
+
+  /**
+   * 文字列format
+   * 文字列中の{0〜}に、2番目以降のパラメータ値を順次埋め込み
+   * @param args[0] 文字列
+   * @param args[1...] パラメータ値
+   * @return {string} 加工文字列
+   */
+  static format (...args) {
+    return args.reduce((previous, current, index) => {
+      return previous.replace(new RegExp('\\{' + (index - 1) + '}', 'g'), current)
+    })
+  }
+
+  /**
+   * 半角英数字チェック
+   * @param {string} _text  文字列
+   * @return {boolean} true:OK, false:NG
+   */
+  static isHankaku (_text) {
+    // 半角以外が存在する場合
+    return !(/[^\x20-\x7E]/).test(_text)
+  }
+
+  /**
+   * 全角チェック
+   * @param {string} _text  文字列
+   * @return {boolean} true:OK, false:NG
+   */
+  static isZenkaku (_text) {
+    return !(/[\w\-.]/).test(_text)
+  }
+
+  /**
+   * 電話番号チェック
+   * @param {string} _text  文字列
+   * @return {boolean} true:OK, false:NG
+   */
+  static isTel (_text) {
+    // 「0～9」「-」「(」「)」以外があったらエラー
+    return !(/[^0-9-()]/).test(_text)
+  }
+
+  /**
+   * 整数チェック
+   * @param {?string} _value 値
+   * @return {boolean} true:OK, false:NG
+   */
+  static isInteger (_value) {
+    const test = /^(-\d+|\d*)$/.test('' + _value)
+    return test && !isNaN(_value)
+  }
+
+  /**
+   * 年月日整合性チェック
+   * @param {?string|?number} _year  年
+   * @param {?string|?number} _month 月
+   * @param {?string|?number} _day 日
+   * @return {boolean} true:OK, false:NG
+   */
+  static isDate (_year, _month, _day) {
+    //= =========================
+    // 年範囲チェック
+    //= =========================
+    if (_year < 1900 || _year > 9999) {
+      return false
+    }
+    //= =========================
+    // 月範囲チェック
+    //= =========================
+    if (_month < 1 || _month > 12) {
+      return false
+    }
+    //= =========================
+    // 日範囲チェック
+    //= =========================
+    // 最小値
+    if (_day < 1) {
+      return false
+    }
+    // 最大値
+    const arrMaxMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    // 2月うるう年補正
+    if ((_year % 4 === 0 && _year % 100 !== 0) || _year % 400 === 0) {
+      arrMaxMonth[1] = 29
+    }
+    return !(arrMaxMonth[_month - 1] < _day)
+  }
+
+  /**
+   * 時分整合性チェック
+   * @param {string|number} _hour  時
+   * @param {string|number} _minute  分
+   * @param {?string|?number} _second  秒(null=未チェック)
+   * @return {boolean} true:OK, false:NG
+   */
+  static isTime (_hour, _minute, _second) {
+    // ====================
+    // 時範囲チェック
+    // ====================
+    if (_hour < 0 || _hour >= 24) {
+      return false
+    }
+    // =====================
+    // 分範囲チェック
+    // =====================
+    if (_minute < 0 || _minute >= 60) {
+      return false
+    }
+    // =====================
+    // 秒範囲チェック
+    // =====================
+    return !(_second !== null && (_second < 0 || _second >= 60))
+  }
+
+  /**
+   * 全角カタカナチェック
+   * @param {string} _text  文字列
+   * @return {boolean} true:OK, false:NG
+   */
+  static isAllKana (_text) {
+    for (let i = 0; i < _text.length; i++) {
+      if (_text.charAt(i) < 'ァ' || _text.charAt(i) > 'ヶ') {
+        if (_text.charAt(i) !== 'ー' && _text.charAt(i) !== ' ' && _text.charAt(i) !== '　') {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
+  /**
+   * 全角ひらがなチェック
+   * @param {string} _text  文字列
+   * @return {boolean} true:OK, false:NG
+   */
+  static isAllHiragana (_text) {
+    for (let i = 0; i < _text.length; i++) {
+      if (_text.charAt(i) < 'ぁ' || _text.charAt(i) > 'ん') {
+        if (_text.charAt(i) !== 'ー' && _text.charAt(i) !== ' ' && _text.charAt(i) !== '　') {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
+  /**
+   * EMailチェック
+   * @param {string} _strEmail  EMAIL
+   * @return {string} '':エラー無し, ''以外:エラー
+   */
+  static isEmailEx (_strEmail) {
+    const emailPat = /^(.+)@(.+)$/
+    const specialChars = '\\(\\)<>@,;:\\\\\\"\\.\\[\\]'
+    const validChars = '[^\\s' + specialChars + ']'
+    const atom = validChars + '+'
+    const domainPat = new RegExp('^' + atom + '(\\.' + atom + ')*$')
+
+    // 最初の「@」で分割
+    const matchArray = _strEmail.match(emailPat)
+
+    // 「@」がない
+    if (matchArray === null) {
+      return this.settings.messages.MAIL_NO_AT
+    }
+
+    // ユーザーとドメインとして格納
+    const domain = matchArray[2]
+
+    // ドメイン名パターンチェック
+    const domainArray = domain.match(domainPat)
+    if (domainArray === null) {
+      return this.settings.messages.MAIL_NO_DOMAIN
+    }
+
+    const atomPat = new RegExp(atom, 'g')
+    const domArr = domain.match(atomPat)
+    const len = domArr.length
+
+    // 最後のドメインが2文字か3文字の以外のとき、エラー
+    // ex) jp,comはOK
+    if (domArr[domArr.length - 1].length < 2 || domArr[domArr.length - 1].length > 4) {
+      return this.settings.messages.MAIL_INVALID_LOCALE
+    }
+
+    if (len < 2) {
+      return this.settings.messages.MAIL_INVALID_LOCALE
+    }
+    return ''
+  };
+}
+
+
+/***/ }),
+
+/***/ "./src/bootstrap-validator-valid-exists-func.js":
+/*!******************************************************!*\
+  !*** ./src/bootstrap-validator-valid-exists-func.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BootstrapValidatorValidExistsFunc": () => (/* binding */ BootstrapValidatorValidExistsFunc)
+/* harmony export */ });
+/**
+ * バリデーション関数群(値あり)
+ */
+class BootstrapValidatorValidExistsFunc {
+  /**
+   * 確認項目
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static confirm (field, ndValues, params, v) {
+    const ndConfirmValues = v.querySelectorByName(field.name + v.settings.confirm_suffix)
+    if (!ndValues || (!ndConfirmValues || ndConfirmValues.length === 0) ||
+      v.helpers.getValue(ndValues) !== v.helpers.getValue(ndConfirmValues)) {
+      return v.helpers.format(
+        v.settings.messages.CONFIRM,
+        (field.label ? field.label : v.settings.messages.CONFIRM_FIELD))
+    }
+    return null
+  }
+
+  /**
+   * E-Mailチェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static email (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    if (val) {
+      const errorEmail = v.helpers.isEmailEx.apply(v, [val])
+      if (errorEmail !== '') {
+        return errorEmail
+      }
+    }
+    return null
+  }
+
+  /**
+   * 全角
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static zenkaku (field, ndValues, params, v) {
+    if (!v.helpers.isZenkaku(v.helpers.getValue(ndValues))) {
+      return v.settings.messages.ZENKAKU
+    }
+    return null
+  }
+
+  /**
+   * 半角
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static hankaku (field, ndValues, params, v) {
+    if (!v.helpers.isHankaku(v.helpers.getValue(ndValues))) {
+      return v.settings.messages.HANKAKU
+    }
+    return null
+  }
+
+  /**
+   * 全角カタカナ
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  // eslint-disable-next-line camelcase
+  static zen_katakana (field, ndValues, params, v) {
+    if (!v.helpers.isAllKana(v.helpers.getValue(ndValues))) {
+      return v.settings.messages.ZEN_KANA
+    }
+    return null
+  }
+
+  /**
+   * 全角ひらがな
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static hiragana (field, ndValues, params, v) {
+    if (!v.helpers.isAllHiragana(v.helpers.getValue(ndValues))) {
+      return v.settings.messages.HIRAGANA
+    }
+    return null
+  }
+
+  /**
+   * 電話番号
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static tel (field, ndValues, params, v) {
+    if (!v.helpers.isTel(v.helpers.getValue(ndValues))) {
+      return v.settings.messages.TEL
+    }
+    return null
+  }
+
+  /**
+   * 数値チェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static numeric (field, ndValues, params, v) {
+    // type="text"の時
+    const val = v.helpers.getValue(ndValues)
+    if (!isFinite(val) || val.indexOf(' ') !== -1 || val.indexOf('0x') !== -1) {
+      return v.settings.messages.NUMERICAL_VALUE
+    }
+    return null
+  }
+
+  /**
+   * 最小文字数
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params.0 文字数
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static minlength (field, ndValues, params, v) {
+    const min = Number(params[0])
+    if (v.helpers.getValue(ndValues).length < min) { return v.helpers.format(v.settings.messages.MIN_LENGTH, min) }
+    return null
+  }
+
+  /**
+   * 最大文字数
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params.0 文字数
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static maxlength (field, ndValues, params, v) {
+    const max = Number(params[0])
+    if (max < v.helpers.getValue(ndValues).length) { return v.helpers.format(v.settings.messages.MAX_LENGTH, max) }
+    return null
+  }
+
+  /**
+   * 数値桁数チェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params.0 最小桁数
+   * @param {string|number} params.1 最大桁数
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static numlength (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    let tmpReg = params[0]
+    let tmpErrorMessage = params[0]
+    if (params[1]) {
+      tmpReg += ',' + params[1]
+      tmpErrorMessage += '～' + params[1]
+    }
+    const reg = new RegExp('^\\d{' + tmpReg + '}$')
+    if (!reg.test(val)) {
+      return v.helpers.format(v.settings.messages.NUM_LENGTH, tmpErrorMessage)
+    }
+    return null
+  }
+
+  /**
+   * 最小値
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params.0 最小値
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static min (field, ndValues, params, v) {
+    /* jscpd:ignore-start */
+    const val = v.helpers.getValue(ndValues)
+    if (!v.helpers.isInteger(val)) {
+      return v.settings.messages.INTEGER
+    }
+    const min = Number(params[0])
+    /* jscpd:ignore-end */
+    if (val < min) { return v.helpers.format(v.settings.messages.MIN, min) }
+    return null
+  }
+
+  /**
+   * 最大値
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params.0 最大値
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static max (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    if (!v.helpers.isInteger(val)) {
+      return v.settings.messages.INTEGER
+    }
+    const max = Number(params[0])
+    if (max < val) { return v.helpers.format(v.settings.messages.MIN, max) }
+    return null
+  }
+
+  /**
+   * 数値範囲
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params.0 最小値
+   * @param {string|number} params.1 最大値
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static range (field, ndValues, params, v) {
+    /* jscpd:ignore-start */
+    const val = v.helpers.getValue(ndValues)
+    if (!v.helpers.isInteger(val)) {
+      return v.settings.messages.INTEGER
+    }
+    const min = Number(params[0])
+    /* jscpd:ignore-end */
+    const max = Number(params[1])
+    if (val < min || max < val) { return v.helpers.format(v.settings.messages.RANGE, min, max) }
+    return null
+  }
+
+  /**
+   * 日付
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static date (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    // 1980/1/2
+    //      ↓
+    // 1980/1/2,1980/1/2,1980,1,2
+    if (!val.match(/^((\d{1,4})[/-](\d{1,2})[/-](\d{1,2}))$/g)) {
+      return v.settings.messages.DATE
+    }
+    // 年月日チェック
+    if (!v.helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
+      return v.settings.messages.DATE_INVALID
+    }
+    return null
+  }
+
+  /**
+   * 日時チェック
+   * [YYYY-MM-DD hh:mm:ss]または[YYYY/MM/DD]の書式でチェックする
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static datetime (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    // 1980/1/2 24:12:11
+    //      ↓
+    // 1980/1/2 23:12:11,1980/1/2,1980,1,2, 24:12:11,23:12:11,23,12,11
+    if (!val.match(/^((\d{1,4})[/-](\d{1,2})[/-](\d{1,2}))( ((\d{1,2}):(\d{1,2})(:(\d{1,2}))?))?$/g)) {
+      return v.settings.messages.DATETIME
+    }
+    // 年月日チェック
+    if (!v.helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
+      return v.settings.messages.DATE_INVALID
+    }
+    if (RegExp.$6 && !v.helpers.isTime(RegExp.$7, RegExp.$8, RegExp.$10)) {
+      return v.settings.messages.TIME_INVALID
+    }
+    return null
+  }
+
+  /**
+   * 日付チェック
+   * [YYYY/MM/DD] or [YYYY/MM] or [YYYY]の書式でチェックする
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  // eslint-disable-next-line camelcase
+  static date_ex (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    // 1980/1/2
+    //      ↓
+    // 1980/1/2,1980/1/2,1980,1,2
+    if (!val.match(/^(\d{1,4})([/-](\d{1,2})([/-](\d{1,2}))?)?$/)) {
+      return v.settings.messages.DATE_EX
+    }
+    // 年月日チェック
+    const y = RegExp.$1
+    const m = RegExp.$3 ? RegExp.$3 : 1
+    const d = RegExp.$5 ? RegExp.$5 : 1
+    if (!v.helpers.isDate(y, m, d)) {
+      return v.settings.messages.DATE_INVALID
+    }
+    return null
+  }
+
+  /**
+   * 時間チェック
+   * [hh:mm:ss]の書式でチェックする
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string} params.0 'hm' [hh:mm]の書式でチェックする
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static time (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    if (params[0] === 'hm') {
+      if (!val.match(/^(\d{1,2}):(\d{1,2})$/g)) {
+        return v.settings.messages.TIME_HM
+      }
+      if (!v.helpers.isTime(RegExp.$1, RegExp.$2, 0)) {
+        return v.settings.messages.TIME_INVALID
+      }
+    } else {
+      if (!val.match(/^(\d{1,2}):(\d{1,2}):(\d{1,2})$/g)) {
+        return v.settings.messages.TIME
+      }
+      if (!v.helpers.isTime(RegExp.$1, RegExp.$2, RegExp.$3)) {
+        return v.settings.messages.TIME_INVALID
+      }
+    }
+    return null
+  }
+
+  /**
+   * 郵便番号
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static zip (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    if (!val.match(/^\d{1,3}-\d{1,4}$/g)) {
+      return v.settings.messages.ZIP
+    }
+    return null
+  }
+
+  /**
+   * 正規表現チェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|RegExp} params.0 正規表現(文字列 or 正規表現クラス)
+   * @param {string} params.1 正規表現フラグ(オプション)
+   * @param {string} params.{1|2} エラーメッセージ(オプション)
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static regexp (field, ndValues, params, v) {
+    const val = v.helpers.getValue(ndValues)
+    let reg, errorMessage
+    if (!Array.isArray(params)) {
+      params = [params]
+    }
+    try {
+      if (typeof params[0] === 'string') {
+        reg = new RegExp(params[0], params[1] ? params[1] : undefined)
+        errorMessage = params[2]
+      } else {
+        reg = params[0]
+        errorMessage = params[1]
+      }
+      if (!reg.test(val)) { return (errorMessage || v.settings.messages.REGEXP_INVALID_VALUE) }
+    } catch (e) {
+      return v.settings.messages.REGEXP_INVALID_PARAM
+    }
+    return null
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/bootstrap-validator-valid-func.js":
+/*!***********************************************!*\
+  !*** ./src/bootstrap-validator-valid-func.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BootstrapValidatorValidFunc": () => (/* binding */ BootstrapValidatorValidFunc)
+/* harmony export */ });
+/**
+ * バリデーション関数群(値なし)
+ */
+class BootstrapValidatorValidFunc {
+  /**
+   * 数値チェック(値なし)
+   * @param {object} field フィールド
+   * @param {NodeList<HTMLInputElement>} ndValues 値NodeList
+   * @param {array} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static numeric (field, ndValues, params, v) {
+    // type="number"時の仮対策
+    if (ndValues && ndValues[0].validity && ndValues[0].validity.badInput) {
+      return ndValues[0].validationMessage
+    }
+    return null
+  }
+
+  /**
+   * チェックボックス
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {Array<string|number>} params ルールパラメータ
+   * @param {string|number} params.0 最小選択数
+   * @param {string|number} params.1 最大選択数
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  static checkbox (field, ndValues, params, v) {
+    const check = v.helpers.getValue(ndValues).length
+    const min = Number(params[0])
+    if (params.length >= 2) {
+      const max = Number(params[1])
+      if (check < min || max < check) {
+        return v.helpers.format(v.settings.messages.CHECKBOX_RANGE, min, max)
+      }
+    } else {
+      if (check < min) {
+        return v.helpers.format(v.settings.messages.CHECKBOX_MIN, min)
+      }
+    }
+  }
+
+  /**
+   * 郵便番号の4桁部分が入力された場合
+   * 3桁部が入力必須になるチェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {array} [params] ルールパラメータ
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string|null} エラーメッセージ(正常時null)
+   */
+  // eslint-disable-next-line camelcase
+  static zip_ex (field, ndValues, params, v) {
+    const zipAfter = v.querySelectorByName(field.name + v.settings.zip_suffix)
+    if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
+      return v.settings.messages.INSUFFICIENT
+    }
+    return null
+  }
+
+  /**
+   * 年月日チェック
+   * フォーム name+"_y", name+"_m", name+"_d"のチェックを行う
+   * 3桁部が入力必須になるチェック
+   * @param {object} field フィールド
+   * @param {NodeList} ndValues 値NodeList
+   * @param {array} params ルールパラメータ
+   * @param {string} params.0 'required':必須チェック
+   * @param {BootstrapValidator} [v] validatorインスタンス
+   * @returns {string[]|null} エラーメッセージ(正常時null)
+   */
+  static ymd (field, ndValues, params, v) {
+    // 変数宣言
+    const arrErrors = []
+
+    // 日付オブジェクト取得
+    let year = null
+    let month = null
+    let day = null
+    let isYear = false
+    let isMonth = false
+    let isDay = false
+    const objY = v.querySelectorByName(field.name + v.settings.ymd_suffix_y)
+    const objM = v.querySelectorByName(field.name + v.settings.ymd_suffix_m)
+    const objD = v.querySelectorByName(field.name + v.settings.ymd_suffix_d)
+    if (v.helpers.existsValue(objY)) {
+      isYear = true
+      year = v.helpers.getValue(objY)
+    }
+    if (v.helpers.existsValue(objM)) {
+      isMonth = true
+      month = v.helpers.getValue(objM)
+    }
+    if (v.helpers.existsValue(objD)) {
+      isDay = true
+      day = v.helpers.getValue(objD)
+    }
+
+    // 日付必須チェック
+    if (params[0] === 'required') {
+      if (!isYear) {
+        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_Y))
+      }
+      if (!isMonth) {
+        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_M))
+      }
+      if (!isDay) {
+        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_D))
+      }
+    } else {
+      // 日付の年月日が一部のみ入力されているとき
+      if ((isYear || isMonth || isDay) && !(isYear && isMonth && isDay)) {
+        if (!isYear) {
+          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_Y))
+        }
+        if (!isMonth) {
+          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_M))
+        }
+        if (!isDay) {
+          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_D))
+        }
+      }
+    }
+    // 年数値チェック
+    if (isYear && !v.helpers.isInteger(year)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_Y))
+    }
+    // 月数値チェック
+    if (isMonth && !v.helpers.isInteger(month)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_M))
+    }
+    // 日数値チェック
+    if (isDay && !v.helpers.isInteger(day)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_D))
+    }
+
+    // 年月日チェック
+    if (arrErrors.length === 0 && !v.helpers.isDate(year, month, day)) {
+      arrErrors.push(v.helpers.format(v.settings.messages.DATE_INVALID))
+    }
+
+    return arrErrors
+  }
+}
+
+
+/***/ }),
+
 /***/ "./src/bootstrap-validator.js":
 /*!************************************!*\
   !*** ./src/bootstrap-validator.js ***!
@@ -11,6 +901,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "BootstrapValidator": () => (/* binding */ BootstrapValidator)
 /* harmony export */ });
 /* harmony import */ var _messages_ja_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/ja.js */ "./src/messages/ja.js");
+/* harmony import */ var _bootstrap_validator_helpers_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bootstrap-validator-helpers.js */ "./src/bootstrap-validator-helpers.js");
+/* harmony import */ var _bootstrap_validator_valid_exists_func_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bootstrap-validator-valid-exists-func.js */ "./src/bootstrap-validator-valid-exists-func.js");
+/* harmony import */ var _bootstrap_validator_valid_func_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bootstrap-validator-valid-func.js */ "./src/bootstrap-validator-valid-func.js");
+
+
+
 
 
 /**
@@ -60,9 +956,9 @@ class BootstrapValidator {
       }
     }
 
-    this.helpers = BootstrapValidatorHelpers
-    this._validFunc = BootstrapValidatorValidFunc
-    this._validExistsFunc = BootstrapValidatorValidExistsFunc
+    this.helpers = _bootstrap_validator_helpers_js__WEBPACK_IMPORTED_MODULE_1__.BootstrapValidatorHelpers
+    this._validFunc = _bootstrap_validator_valid_func_js__WEBPACK_IMPORTED_MODULE_3__.BootstrapValidatorValidFunc
+    this._validExistsFunc = _bootstrap_validator_valid_exists_func_js__WEBPACK_IMPORTED_MODULE_2__.BootstrapValidatorValidExistsFunc
 
     // submitイベント登録
     this.listenerSubmit = event => this.onSubmit(event)
@@ -462,853 +1358,6 @@ class BootstrapValidator {
   }
 }
 
-/**
- * 補助処理群
- */
-class BootstrapValidatorHelpers {
-  /**
-   * フィールドから値を取得
-   * @param {NodeList} ndValues NodeList
-   * @return {string} 値
-   */
-  static getValue (ndValues) {
-    const type = ndValues[0].attributes.type ? ndValues[0].attributes.type.value : null
-    let val
-    if (type === 'radio') {
-      ndValues.forEach(el => {
-        if (el.checked) {
-          val = el.value
-          return true
-        }
-      })
-    } else if (type !== 'checkbox') {
-      val = ndValues[0].value
-    } else {
-      val = []
-      ndValues.forEach(el => {
-        if (el.checked) {
-          val.push(el.value)
-        }
-      })
-    }
-    return val
-  }
-
-  /**
-   * 値が入力されているか？
-   * @param {NodeList} ndValues NodeList
-   * @return {boolean} true:入力, false:未入力
-   */
-  static existsValue (ndValues) {
-    if (!ndValues || ndValues.length === 0) {
-      return false
-    }
-    let ret
-    const type = ndValues[0].attributes.type ? ndValues[0].attributes.type.value : null
-    if (type === 'checkbox') {
-      ret = false
-      ndValues.forEach(el => {
-        if (el.checked) {
-          ret = true
-          return true
-        }
-      })
-    } else {
-      ret = !!this.getValue(ndValues)
-    }
-    return ret
-  }
-
-  /**
-   * エラー配列付加
-   * @param {string[]|Object[]} arrErrors エラー情報配列
-   * @param {Object} field    フィールド情報
-   * @param {string|string[]} errors 追加エラー情報
-   * @return {string[]|Object[]} array arrErrors
-   */
-  static pushErrors (arrErrors, field, errors) {
-    const label = field.label ? field.label : field.name
-    if (typeof errors === 'string' && errors) {
-      arrErrors.push({ name: field.name, label: label, message: errors })
-    } else if (Array.isArray(errors)) {
-      errors.forEach(error => {
-        arrErrors.push({ name: field.name, label: label, message: error })
-      })
-    }
-    return arrErrors
-  }
-
-  /**
-   * エラーメッセージを返す
-   * @param {string[]|Object[]} arrErrors エラー情報配列
-   * @param {?string} delimiter デリミタ
-   * @returns {string} エラーメッセージ
-   */
-  static join (arrErrors, delimiter) {
-    if (delimiter === undefined) delimiter = '\n'
-    const arrErrorMessages = []
-    arrErrors.forEach((error) => {
-      if (typeof error === 'string' && error) {
-        arrErrorMessages.push(error)
-      } else {
-        // -----------------------
-        // エラー情報追加
-        // error.name フィールド名
-        // error.d_name フィールド表示名
-        // error.message エラーメッセージ
-        // -----------------------
-        arrErrorMessages.push((error.label ? error.label : error.name) + ' : ' + error.message)
-      }
-    })
-    return arrErrorMessages.join(delimiter)
-  }
-
-  /**
-   * 文字列format
-   * 文字列中の{0〜}に、2番目以降のパラメータ値を順次埋め込み
-   * @param args[0] 文字列
-   * @param args[1...] パラメータ値
-   * @return {string} 加工文字列
-   */
-  static format (...args) {
-    return args.reduce((previous, current, index) => {
-      return previous.replace(new RegExp('\\{' + (index - 1) + '}', 'g'), current)
-    })
-  }
-
-  /**
-   * 半角英数字チェック
-   * @param {string} _text  文字列
-   * @return {boolean} true:OK, false:NG
-   */
-  static isHankaku (_text) {
-    // 半角以外が存在する場合
-    return !(/[^\x20-\x7E]/).test(_text)
-  }
-
-  /**
-   * 全角チェック
-   * @param {string} _text  文字列
-   * @return {boolean} true:OK, false:NG
-   */
-  static isZenkaku (_text) {
-    return !(/[\w\-.]/).test(_text)
-  }
-
-  /**
-   * 電話番号チェック
-   * @param {string} _text  文字列
-   * @return {boolean} true:OK, false:NG
-   */
-  static isTel (_text) {
-    // 「0～9」「-」「(」「)」以外があったらエラー
-    return !(/[^0-9-()]/).test(_text)
-  }
-
-  /**
-   * 整数チェック
-   * @param {?string} _value 値
-   * @return {boolean} true:OK, false:NG
-   */
-  static isInteger (_value) {
-    const test = /^(-\d+|\d*)$/.test('' + _value)
-    return test && !isNaN(_value)
-  }
-
-  /**
-   * 年月日整合性チェック
-   * @param {?string|?number} _year  年
-   * @param {?string|?number} _month 月
-   * @param {?string|?number} _day 日
-   * @return {boolean} true:OK, false:NG
-   */
-  static isDate (_year, _month, _day) {
-    //= =========================
-    // 年範囲チェック
-    //= =========================
-    if (_year < 1900 || _year > 9999) {
-      return false
-    }
-    //= =========================
-    // 月範囲チェック
-    //= =========================
-    if (_month < 1 || _month > 12) {
-      return false
-    }
-    //= =========================
-    // 日範囲チェック
-    //= =========================
-    // 最小値
-    if (_day < 1) {
-      return false
-    }
-    // 最大値
-    const arrMaxMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    // 2月うるう年補正
-    if ((_year % 4 === 0 && _year % 100 !== 0) || _year % 400 === 0) {
-      arrMaxMonth[1] = 29
-    }
-    return !(arrMaxMonth[_month - 1] < _day)
-  }
-
-  /**
-   * 時分整合性チェック
-   * @param {string|number} _hour  時
-   * @param {string|number} _minute  分
-   * @param {?string|?number} _second  秒(null=未チェック)
-   * @return {boolean} true:OK, false:NG
-   */
-  static isTime (_hour, _minute, _second) {
-    // ====================
-    // 時範囲チェック
-    // ====================
-    if (_hour < 0 || _hour >= 24) {
-      return false
-    }
-    // =====================
-    // 分範囲チェック
-    // =====================
-    if (_minute < 0 || _minute >= 60) {
-      return false
-    }
-    // =====================
-    // 秒範囲チェック
-    // =====================
-    return !(_second !== null && (_second < 0 || _second >= 60))
-  }
-
-  /**
-   * 全角カタカナチェック
-   * @param {string} _text  文字列
-   * @return {boolean} true:OK, false:NG
-   */
-  static isAllKana (_text) {
-    for (let i = 0; i < _text.length; i++) {
-      if (_text.charAt(i) < 'ァ' || _text.charAt(i) > 'ヶ') {
-        if (_text.charAt(i) !== 'ー' && _text.charAt(i) !== ' ' && _text.charAt(i) !== '　') {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
-  /**
-   * 全角ひらがなチェック
-   * @param {string} _text  文字列
-   * @return {boolean} true:OK, false:NG
-   */
-  static isAllHiragana (_text) {
-    for (let i = 0; i < _text.length; i++) {
-      if (_text.charAt(i) < 'ぁ' || _text.charAt(i) > 'ん') {
-        if (_text.charAt(i) !== 'ー' && _text.charAt(i) !== ' ' && _text.charAt(i) !== '　') {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
-  /**
-   * EMailチェック
-   * @param {string} _strEmail  EMAIL
-   * @return {string} '':エラー無し, ''以外:エラー
-   */
-  static isEmailEx (_strEmail) {
-    const emailPat = /^(.+)@(.+)$/
-    const specialChars = '\\(\\)<>@,;:\\\\\\"\\.\\[\\]'
-    const validChars = '[^\\s' + specialChars + ']'
-    const atom = validChars + '+'
-    const domainPat = new RegExp('^' + atom + '(\\.' + atom + ')*$')
-
-    // 最初の「@」で分割
-    const matchArray = _strEmail.match(emailPat)
-
-    // 「@」がない
-    if (matchArray === null) {
-      return this.settings.messages.MAIL_NO_AT
-    }
-
-    // ユーザーとドメインとして格納
-    const domain = matchArray[2]
-
-    // ドメイン名パターンチェック
-    const domainArray = domain.match(domainPat)
-    if (domainArray === null) {
-      return this.settings.messages.MAIL_NO_DOMAIN
-    }
-
-    const atomPat = new RegExp(atom, 'g')
-    const domArr = domain.match(atomPat)
-    const len = domArr.length
-
-    // 最後のドメインが2文字か3文字の以外のとき、エラー
-    // ex) jp,comはOK
-    if (domArr[domArr.length - 1].length < 2 || domArr[domArr.length - 1].length > 4) {
-      return this.settings.messages.MAIL_INVALID_LOCALE
-    }
-
-    if (len < 2) {
-      return this.settings.messages.MAIL_INVALID_LOCALE
-    }
-    return ''
-  };
-}
-
-/**
- * バリデーション関数群(値なし)
- */
-class BootstrapValidatorValidFunc {
-  /**
-   * 数値チェック(値なし)
-   * @param {object} field フィールド
-   * @param {NodeList<HTMLInputElement>} ndValues 値NodeList
-   * @param {array} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static numeric (field, ndValues, params, v) {
-    // type="number"時の仮対策
-    if (ndValues && ndValues[0].validity && ndValues[0].validity.badInput) {
-      return ndValues[0].validationMessage
-    }
-    return null
-  }
-
-  /**
-   * チェックボックス
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params.0 最小選択数
-   * @param {string|number} params.1 最大選択数
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static checkbox (field, ndValues, params, v) {
-    const check = v.helpers.getValue(ndValues).length
-    const min = Number(params[0])
-    if (params.length >= 2) {
-      const max = Number(params[1])
-      if (check < min || max < check) {
-        return v.helpers.format(v.settings.messages.CHECKBOX_RANGE, min, max)
-      }
-    } else {
-      if (check < min) {
-        return v.helpers.format(v.settings.messages.CHECKBOX_MIN, min)
-      }
-    }
-  }
-
-  /**
-   * 郵便番号の4桁部分が入力された場合
-   * 3桁部が入力必須になるチェック
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {array} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  // eslint-disable-next-line camelcase
-  static zip_ex (field, ndValues, params, v) {
-    const zipAfter = v.querySelectorByName(field.name + v.settings.zip_suffix)
-    if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
-      return v.settings.messages.INSUFFICIENT
-    }
-    return null
-  }
-
-  /**
-   * 年月日チェック
-   * フォーム name+"_y", name+"_m", name+"_d"のチェックを行う
-   * 3桁部が入力必須になるチェック
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {array} params ルールパラメータ
-   * @param {string} params.0 'required':必須チェック
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string[]|null} エラーメッセージ(正常時null)
-   */
-  static ymd (field, ndValues, params, v) {
-    // 変数宣言
-    const arrErrors = []
-
-    // 日付オブジェクト取得
-    let year = null
-    let month = null
-    let day = null
-    let isYear = false
-    let isMonth = false
-    let isDay = false
-    const objY = v.querySelectorByName(field.name + v.settings.ymd_suffix_y)
-    const objM = v.querySelectorByName(field.name + v.settings.ymd_suffix_m)
-    const objD = v.querySelectorByName(field.name + v.settings.ymd_suffix_d)
-    if (v.helpers.existsValue(objY)) {
-      isYear = true
-      year = v.helpers.getValue(objY)
-    }
-    if (v.helpers.existsValue(objM)) {
-      isMonth = true
-      month = v.helpers.getValue(objM)
-    }
-    if (v.helpers.existsValue(objD)) {
-      isDay = true
-      day = v.helpers.getValue(objD)
-    }
-
-    // 日付必須チェック
-    if (params[0] === 'required') {
-      if (!isYear) {
-        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_Y))
-      }
-      if (!isMonth) {
-        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_M))
-      }
-      if (!isDay) {
-        arrErrors.push(v.helpers.format(v.settings.messages.REQUIRED_PART, v.settings.messages.DATE_PART_D))
-      }
-    } else {
-      // 日付の年月日が一部のみ入力されているとき
-      if ((isYear || isMonth || isDay) && !(isYear && isMonth && isDay)) {
-        if (!isYear) {
-          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_Y))
-        }
-        if (!isMonth) {
-          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_M))
-        }
-        if (!isDay) {
-          arrErrors.push(v.helpers.format(v.settings.messages.INSUFFICIENT_PART, v.settings.messages.DATE_PART_D))
-        }
-      }
-    }
-    // 年数値チェック
-    if (isYear && !v.helpers.isInteger(year)) {
-      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_Y))
-    }
-    // 月数値チェック
-    if (isMonth && !v.helpers.isInteger(month)) {
-      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_M))
-    }
-    // 日数値チェック
-    if (isDay && !v.helpers.isInteger(day)) {
-      arrErrors.push(v.helpers.format(v.settings.messages.INTEGER_PART, v.settings.messages.DATE_PART_D))
-    }
-
-    // 年月日チェック
-    if (arrErrors.length === 0 && !v.helpers.isDate(year, month, day)) {
-      arrErrors.push(v.helpers.format(v.settings.messages.DATE_INVALID))
-    }
-
-    return arrErrors
-  }
-}
-
-/**
- * バリデーション関数群(値あり)
- */
-class BootstrapValidatorValidExistsFunc {
-  /**
-   * 確認項目
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static confirm (field, ndValues, params, v) {
-    const ndConfirmValues = v.querySelectorByName(field.name + v.settings.confirm_suffix)
-    if (!ndValues || (!ndConfirmValues || ndConfirmValues.length === 0) ||
-      v.helpers.getValue(ndValues) !== v.helpers.getValue(ndConfirmValues)) {
-      return v.helpers.format(
-        v.settings.messages.CONFIRM,
-        (field.label ? field.label : v.settings.messages.CONFIRM_FIELD))
-    }
-    return null
-  }
-
-  /**
-   * E-Mailチェック
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static email (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    if (val) {
-      const errorEmail = v.helpers.isEmailEx.apply(v, [val])
-      if (errorEmail !== '') {
-        return errorEmail
-      }
-    }
-    return null
-  }
-
-  /**
-   * 全角
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static zenkaku (field, ndValues, params, v) {
-    if (!v.helpers.isZenkaku(v.helpers.getValue(ndValues))) {
-      return v.settings.messages.ZENKAKU
-    }
-    return null
-  }
-
-  /**
-   * 半角
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static hankaku (field, ndValues, params, v) {
-    if (!v.helpers.isHankaku(v.helpers.getValue(ndValues))) {
-      return v.settings.messages.HANKAKU
-    }
-    return null
-  }
-
-  /**
-   * 全角カタカナ
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  // eslint-disable-next-line camelcase
-  static zen_katakana (field, ndValues, params, v) {
-    if (!v.helpers.isAllKana(v.helpers.getValue(ndValues))) {
-      return v.settings.messages.ZEN_KANA
-    }
-    return null
-  }
-
-  /**
-   * 全角ひらがな
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static hiragana (field, ndValues, params, v) {
-    if (!v.helpers.isAllHiragana(v.helpers.getValue(ndValues))) {
-      return v.settings.messages.HIRAGANA
-    }
-    return null
-  }
-
-  /**
-   * 電話番号
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static tel (field, ndValues, params, v) {
-    if (!v.helpers.isTel(v.helpers.getValue(ndValues))) {
-      return v.settings.messages.TEL
-    }
-    return null
-  }
-
-  /**
-   * 数値チェック
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static numeric (field, ndValues, params, v) {
-    // type="text"の時
-    const val = v.helpers.getValue(ndValues)
-    if (!isFinite(val) || val.indexOf(' ') !== -1 || val.indexOf('0x') !== -1) {
-      return v.settings.messages.NUMERICAL_VALUE
-    }
-    return null
-  }
-
-  /**
-   * 最小文字数
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params.0 文字数
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static minlength (field, ndValues, params, v) {
-    const min = Number(params[0])
-    if (v.helpers.getValue(ndValues).length < min) { return v.helpers.format(v.settings.messages.MIN_LENGTH, min) }
-    return null
-  }
-
-  /**
-   * 最大文字数
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params.0 文字数
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static maxlength (field, ndValues, params, v) {
-    const max = Number(params[0])
-    if (max < v.helpers.getValue(ndValues).length) { return v.helpers.format(v.settings.messages.MAX_LENGTH, max) }
-    return null
-  }
-
-  /**
-   * 数値桁数チェック
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params.0 最小桁数
-   * @param {string|number} params.1 最大桁数
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static numlength (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    let tmpReg = params[0]
-    let tmpErrorMessage = params[0]
-    if (params[1]) {
-      tmpReg += ',' + params[1]
-      tmpErrorMessage += '～' + params[1]
-    }
-    const reg = new RegExp('^\\d{' + tmpReg + '}$')
-    if (!reg.test(val)) {
-      return v.helpers.format(v.settings.messages.NUM_LENGTH, tmpErrorMessage)
-    }
-    return null
-  }
-
-  /**
-   * 最小値
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params.0 最小値
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static min (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    if (!v.helpers.isInteger(val)) {
-      return v.settings.messages.INTEGER
-    }
-    const min = Number(params[0])
-    if (val < min) { return v.helpers.format(v.settings.messages.MIN, min) }
-    return null
-  }
-
-  /**
-   * 最大値
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params.0 最大値
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static max (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    if (!v.helpers.isInteger(val)) {
-      return v.settings.messages.INTEGER
-    }
-    const max = Number(params[0])
-    if (max < val) { return v.helpers.format(v.settings.messages.MIN, max) }
-    return null
-  }
-
-  /**
-   * 数値範囲
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|number} params.0 最小値
-   * @param {string|number} params.1 最大値
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static range (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    if (!v.helpers.isInteger(val)) {
-      return v.settings.messages.INTEGER
-    }
-    const min = Number(params[0])
-    const max = Number(params[1])
-    if (val < min || max < val) { return v.helpers.format(v.settings.messages.RANGE, min, max) }
-    return null
-  }
-
-  /**
-   * 日付
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static date (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    // 1980/1/2
-    //      ↓
-    // 1980/1/2,1980/1/2,1980,1,2
-    if (!val.match(/^((\d{1,4})[/-](\d{1,2})[/-](\d{1,2}))$/g)) {
-      return v.settings.messages.DATE
-    }
-    // 年月日チェック
-    if (!v.helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
-      return v.settings.messages.DATE_INVALID
-    }
-    return null
-  }
-
-  /**
-   * 日時チェック
-   * [YYYY-MM-DD hh:mm:ss]または[YYYY/MM/DD]の書式でチェックする
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static datetime (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    // 1980/1/2 24:12:11
-    //      ↓
-    // 1980/1/2 23:12:11,1980/1/2,1980,1,2, 24:12:11,23:12:11,23,12,11
-    if (!val.match(/^((\d{1,4})[/-](\d{1,2})[/-](\d{1,2}))( ((\d{1,2}):(\d{1,2})(:(\d{1,2}))?))?$/g)) {
-      return v.settings.messages.DATETIME
-    }
-    // 年月日チェック
-    if (!v.helpers.isDate(RegExp.$2, RegExp.$3, RegExp.$4)) {
-      return v.settings.messages.DATE_INVALID
-    }
-    if (RegExp.$6 && !v.helpers.isTime(RegExp.$7, RegExp.$8, RegExp.$10)) {
-      return v.settings.messages.TIME_INVALID
-    }
-    return null
-  }
-
-  /**
-   * 日付チェック
-   * [YYYY/MM/DD] or [YYYY/MM] or [YYYY]の書式でチェックする
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  // eslint-disable-next-line camelcase
-  static date_ex (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    // 1980/1/2
-    //      ↓
-    // 1980/1/2,1980/1/2,1980,1,2
-    if (!val.match(/^(\d{1,4})([/-](\d{1,2})([/-](\d{1,2}))?)?$/)) {
-      return v.settings.messages.DATE_EX
-    }
-    // 年月日チェック
-    const y = RegExp.$1
-    const m = RegExp.$3 ? RegExp.$3 : 1
-    const d = RegExp.$5 ? RegExp.$5 : 1
-    if (!v.helpers.isDate(y, m, d)) {
-      return v.settings.messages.DATE_INVALID
-    }
-    return null
-  }
-
-  /**
-   * 時間チェック
-   * [hh:mm:ss]の書式でチェックする
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string} params.0 'hm' [hh:mm]の書式でチェックする
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static time (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    if (params[0] === 'hm') {
-      if (!val.match(/^(\d{1,2}):(\d{1,2})$/g)) {
-        return v.settings.messages.TIME_HM
-      }
-      if (!v.helpers.isTime(RegExp.$1, RegExp.$2, 0)) {
-        return v.settings.messages.TIME_INVALID
-      }
-    } else {
-      if (!val.match(/^(\d{1,2}):(\d{1,2}):(\d{1,2})$/g)) {
-        return v.settings.messages.TIME
-      }
-      if (!v.helpers.isTime(RegExp.$1, RegExp.$2, RegExp.$3)) {
-        return v.settings.messages.TIME_INVALID
-      }
-    }
-    return null
-  }
-
-  /**
-   * 郵便番号
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} [params] ルールパラメータ
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static zip (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    if (!val.match(/^\d{1,3}-\d{1,4}$/g)) {
-      return v.settings.messages.ZIP
-    }
-    return null
-  }
-
-  /**
-   * 正規表現チェック
-   * @param {object} field フィールド
-   * @param {NodeList} ndValues 値NodeList
-   * @param {Array<string|number>} params ルールパラメータ
-   * @param {string|RegExp} params.0 正規表現(文字列 or 正規表現クラス)
-   * @param {string} params.1 正規表現フラグ(オプション)
-   * @param {string} params.{1|2} エラーメッセージ(オプション)
-   * @param {BootstrapValidator} [v] validatorインスタンス
-   * @returns {string|null} エラーメッセージ(正常時null)
-   */
-  static regexp (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    let reg, errorMessage
-    if (!Array.isArray(params)) {
-      params = [params]
-    }
-    try {
-      if (typeof params[0] === 'string') {
-        reg = new RegExp(params[0], params[1] ? params[1] : undefined)
-        errorMessage = params[2]
-      } else {
-        reg = params[0]
-        errorMessage = params[1]
-      }
-      if (!reg.test(val)) { return (errorMessage || v.settings.messages.REGEXP_INVALID_VALUE) }
-    } catch (e) {
-      return v.settings.messages.REGEXP_INVALID_PARAM
-    }
-    return null
-  }
-}
-
 
 /***/ }),
 
@@ -1441,6 +1490,9 @@ const MESSAGES = {
 /******/ // Load entry module and return exports
 /******/ // This entry module is referenced by other modules so it can't be inlined
 /******/ __webpack_require__("./src/messages/ja.js");
+/******/ __webpack_require__("./src/bootstrap-validator-helpers.js");
+/******/ __webpack_require__("./src/bootstrap-validator-valid-func.js");
+/******/ __webpack_require__("./src/bootstrap-validator-valid-exists-func.js");
 /******/ var __webpack_exports__ = __webpack_require__("./src/bootstrap-validator.js");
 /******/ var __webpack_exports__BootstrapValidator = __webpack_exports__.BootstrapValidator;
 /******/ export { __webpack_exports__BootstrapValidator as BootstrapValidator };

@@ -64,6 +64,7 @@ valitetor.validate()
 オプション名 | 初期値 | 機能
 --- | --- | ---
 submit |'validate' | Submit時に行う処理、メソッド文字列 or 関数 or null(何もしない)
+result |null | バリデーション後に行う処理、関数 or null(何もしない)
 confirm_suffix|'\_confirm' | confirmルールの確認フィールドの接尾語
 zip_suffix | '\_after' |zip_exルールの4桁フィールドの接尾語
 clearError | null | エラークリア関数を指定
