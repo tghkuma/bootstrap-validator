@@ -69,10 +69,10 @@ class BootstrapValidatorHelpers {
 
   /**
    * エラー配列付加
-   * @param {string[]|Object[]} arrErrors エラー情報配列
+   * @param {Array<BootstrapValidatorError>} arrErrors エラー情報配列
    * @param {Object} field    フィールド情報
    * @param {string|string[]} errors 追加エラー情報
-   * @return {string[]|Object[]} array arrErrors
+   * @return {Array<BootstrapValidatorError>} エラー情報配列
    */
   static pushErrors (arrErrors, field, errors) {
     const label = field.label ? field.label : field.name
@@ -88,8 +88,8 @@ class BootstrapValidatorHelpers {
 
   /**
    * エラーメッセージを返す
-   * @param {string[]|Object[]} arrErrors エラー情報配列
-   * @param {?string} delimiter デリミタ
+   * @param {Array<string|Object>} arrErrors エラー情報配列
+   * @param {string} [delimiter] デリミタ
    * @returns {string} エラーメッセージ
    */
   static join (arrErrors, delimiter) {
@@ -155,7 +155,7 @@ class BootstrapValidatorHelpers {
 
   /**
    * 整数チェック
-   * @param {?string} _value 値
+   * @param {string} _value 値
    * @return {boolean} true:OK, false:NG
    */
   static isInteger (_value) {
@@ -165,9 +165,9 @@ class BootstrapValidatorHelpers {
 
   /**
    * 年月日整合性チェック
-   * @param {?string|?number} _year  年
-   * @param {?string|?number} _month 月
-   * @param {?string|?number} _day 日
+   * @param {string|?number} [_year]  年
+   * @param {string|?number} [_month] 月
+   * @param {string|?number} [_day] 日
    * @return {boolean} true:OK, false:NG
    */
   static isDate (_year, _month, _day) {
@@ -203,7 +203,7 @@ class BootstrapValidatorHelpers {
    * 時分整合性チェック
    * @param {string|number} _hour  時
    * @param {string|number} _minute  分
-   * @param {?string|?number} _second  秒(null=未チェック)
+   * @param {string|?number} [_second]  秒(null=未チェック)
    * @return {boolean} true:OK, false:NG
    */
   static isTime (_hour, _minute, _second) {
@@ -910,6 +910,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
+ * 設定パラメータ
+ * @typedef {Object} Settings
+ * @property {null|string|function} submit Submit時に行う処理
+ * @property {null|function} result バリデーション後に行う処理
+ * @property {string} confirm_suffix confirmルールの確認フィールドの接尾語
+ * @property {string} zip_suffix zip_exルールの4桁フィールドの接尾語
+ * @property {string} ymd_suffix_y ymdルールの年フィールドの接尾語
+ * @property {string} ymd_suffix_m ymdルールの月フィールドの接尾語
+ * @property {string} ymd_suffix_d ymdルールの日フィールドの接尾語
+ * @property {null|function} setError エラー設定関数を指定
+ * @property {null|function} setError エラークリア関数を指定
+ * @property {boolean} focusError true=エラー時に最初のエラーにフォーカスする
+ * @property {MESSAGES} messages メッセージ情報配列
+ */
+
+/**
+ * errorパラメータ
+ * @typedef {Object} BootstrapValidatorError
+ * @property {string} name 項目名
+ * @property {string} label 項目ラベル名
+ * @property {string|string[]} message エラーメッセージ
+ */
+
+/**
  * Bootstrapレイアウトバリデーション
  */
 class BootstrapValidator {
@@ -923,7 +947,10 @@ class BootstrapValidator {
     /** フォームElement */
     this.form = form
 
-    /** 初期設定情報 */
+    /**
+     * 初期設定情報
+     * @var {Settings}
+     */
     this._settings = {
       submit: 'validate',
       result: null,
@@ -934,6 +961,7 @@ class BootstrapValidator {
       ymd_suffix_d: '_d',
       setError: null,
       clearError: null,
+      focusError: false,
       /** メッセージ */
       messages: _messages_ja_js__WEBPACK_IMPORTED_MODULE_0__.MESSAGES
     }
@@ -983,7 +1011,7 @@ class BootstrapValidator {
     let ret = false
     if (this.settings.submit) {
       if (typeof this.settings.submit === 'string') {
-        if (['validate', 'validateAlert'].indexOf(this.settings.submit) !== -1) {
+        if (['validate', 'validateAlert', 'asyncValidate', 'asyncValidateAlert'].indexOf(this.settings.submit) !== -1) {
           ret = this[this.settings.submit]()
         } else {
           console.error('Not exists method [' + this.settings.submit + ']')
@@ -1020,7 +1048,7 @@ class BootstrapValidator {
 
   /**
    * 設定データ取得
-   * @return {_settings} 設定データ
+   * @return {Settings} 設定データ
    */
   get settings () {
     return this._settings
@@ -1029,7 +1057,7 @@ class BootstrapValidator {
   /**
    * 設定データ更新
    * 既存の設定とマージする
-   * @param {_settings} settings 設定データ
+   * @param {Settings} settings 設定データ
    */
   set settings (settings) {
     this._settings = Object.assign(this._settings, settings)
@@ -1153,14 +1181,13 @@ class BootstrapValidator {
   }
 
   /**
-   * バリデーション処理
-   * @param {Object} [options] オプションフィールド情報
-   * @return {boolean} true:正常
+   * バリデーション共通処理
+   * @param {Array<string|Object>} errors エラー情報配列
+   * @return {boolean} true:エラー
+   * @private
    */
-  validate (options) {
+  _validateCommon (errors) {
     let result = true
-    this.clearError()
-    const errors = this.getValidateResult(options)
     if (errors.length > 0) {
       this.displayError(errors)
       result = false
@@ -1172,14 +1199,35 @@ class BootstrapValidator {
   }
 
   /**
-   * パラメータチェック
-   * (エラー時アラート)
-   * @param {Object} options オプション
-   * @returns {boolean|string[]} エラー値
+   * バリデーション処理
+   * @param {Object} [options] オプションフィールド情報
+   * @return {boolean} true:正常
    */
-  validateAlert (options) {
+  validate (options) {
+    this.clearError()
+    return this._validateCommon(this.getValidateResult(options))
+  }
+
+  /**
+   * バリデーション処理(async版)
+   * @param {Object} [options] オプションフィールド情報
+   * @returns {Promise<boolean>} true:正常
+   */
+  async asyncValidate (options) {
+    this.clearError()
+    return this.asyncGetValidateResult(options).then(errors =>
+      this._validateCommon(errors)
+    )
+  }
+
+  /**
+   * バリデーション共通処理(エラー時アラート)
+   * @param {Array<string|Object>} errors エラー情報配列
+   * @return {boolean} true:エラー
+   * @private
+   */
+  _validateAlertCommon (errors) {
     let result = true
-    const errors = this.getValidateResult(options)
     if (errors.length > 0) {
       window.alert(this.settings.messages.VALIDATE_ERROR + '\n' + this.helpers.join(errors))
       if (this.settings.focusError) {
@@ -1197,8 +1245,30 @@ class BootstrapValidator {
   }
 
   /**
+   * パラメータチェック
+   * (エラー時アラート)
+   * @param {Object} [options] オプション
+   * @returns {boolean} true:正常
+   */
+  validateAlert (options) {
+    return this._validateAlertCommon(this.getValidateResult(options))
+  }
+
+  /**
+   * パラメータチェック(async版)
+   * (エラー時アラート)
+   * @param {Object} [options] オプション
+   * @returns {Promise<boolean>} true:正常
+   */
+  async asyncValidateAlert (options) {
+    return await this.asyncGetValidateResult(options).then(errors => {
+      return this._validateAlertCommon(errors)
+    })
+  }
+
+  /**
    * フィールド/ルール情報取得
-   * @returns {Array<Object>}
+   * @returns {Object[]}
    */
   getFieldsRules () {
     const fields = []
@@ -1254,6 +1324,12 @@ class BootstrapValidator {
     return fields
   }
 
+  /**
+   * ルールをルールとパラメータに分解
+   * @param {Object|Array|string} rule ルール
+   * @return {(Object|Array|string|*[])[]} ルール,パラメータ
+   * @private
+   */
   _parseRule (rule) {
     let params
     // ------------------
@@ -1264,7 +1340,7 @@ class BootstrapValidator {
     // [ 'ルール名', <パラメータ1>, <パラメータ2>..., <パラメータn> ]
     if (Array.isArray(rule)) {
       if (rule.length === 0) {
-        return [null, null]
+        return null
       } else if (rule.length === 2) {
         params = rule[1]
         if (!Array.isArray(params)) {
@@ -1278,7 +1354,7 @@ class BootstrapValidator {
       // ルールがObject
       // { rule:'ルール名', params:[<パラメータ配列>]}
       if (!rule.rule) {
-        return
+        return null
       }
       if (rule.params) {
         params = rule.params
@@ -1311,6 +1387,36 @@ class BootstrapValidator {
   }
 
   /**
+   * 指定ルールでバリデート
+   * @param {function|string} rule バリデーションルール
+   * @param {object} field フィールド
+   * @param {NodeList<HTMLInputElement>} ndValues 値NodeList
+   * @param {Array<string|number>} [params] ルールパラメータ
+   * @return {null|string|string[]|Promise<null|string|string[]>} エラー情報
+   * @private
+   */
+  _validateRule (rule, field, ndValues, params) {
+    let errors
+    if (typeof rule === 'function') {
+      // 独自チェック関数
+      errors = rule.apply(this, [field, ndValues, params, this])
+    } else if (!this.helpers.existsValue(ndValues)) {
+      if (rule === 'required') {
+        if (!this.helpers.existsValue(ndValues)) {
+          errors = this.settings.messages.REQUIRED
+        }
+      } else if (typeof this._validFunc[rule] === 'function') {
+        errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+      }
+    } else if (typeof this._validExistsFunc[rule] === 'function') {
+      errors = this._validExistsFunc[rule].apply(this, [field, ndValues, params, this])
+    } else if (rule === 'checkbox') {
+      errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+    }
+    return errors
+  }
+
+  /**
    * バリデーション結果取得
    * @param {Object} [options] オプションフィールド情報
    * @returns {boolean|string[]} エラー値
@@ -1319,6 +1425,7 @@ class BootstrapValidator {
     const fields = (options && options.fields) ? options.fields : (this.fields || this.getFieldsRules())
     const arrRuleErrors = []
     fields.forEach(field => {
+      /* jscpd:ignore-start */
       const ndValues = this.querySelectorByName(field.name)
       if (!field.rules) {
         return
@@ -1328,33 +1435,58 @@ class BootstrapValidator {
         rules = [rules]
       }
       rules.forEach(rule => {
-        let params;
+        let params
         [rule, params] = this._parseRule(rule)
 
-        if (!this.helpers.existsValue(ndValues)) {
-          if (rule === 'required') {
-            if (!this.helpers.existsValue(ndValues)) {
-              this.helpers.pushErrors(arrRuleErrors, field, this.settings.messages.REQUIRED)
-            }
-          } else if (typeof this._validFunc[rule] === 'function') {
-            const errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
-            this.helpers.pushErrors(arrRuleErrors, field, errors)
-          }
-        } else if (typeof this._validExistsFunc[rule] === 'function') {
-          const errors = this._validExistsFunc[rule].apply(this, [field, ndValues, params, this])
-          this.helpers.pushErrors(arrRuleErrors, field, errors)
-        } else if (rule === 'checkbox') {
-          const errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
-          this.helpers.pushErrors(arrRuleErrors, field, errors)
-        }
-        if (typeof rule === 'function') {
-          // 独自チェック関数
-          const errors = rule.apply(this, [field, ndValues, params, this])
-          this.helpers.pushErrors(arrRuleErrors, field, errors)
-        }
+        const errors = this._validateRule(rule, field, ndValues, params)
+        this.helpers.pushErrors(arrRuleErrors, field, errors)
       })
+      /* jscpd:ignore-end */
     })
     return arrRuleErrors
+  }
+
+  /**
+   * バリデーション結果取得(async版)
+   * @param {Object} [options] オプションフィールド情報
+   * @returns {Promise<boolean>|Promise<string[]>} エラー値
+   */
+  async asyncGetValidateResult (options) {
+    const fields = (options && options.fields) ? options.fields : (this.fields || this.getFieldsRules())
+    const promises = []
+    const errorFields = []
+    for (const field of fields) {
+      const ndValues = this.querySelectorByName(field.name)
+      if (!field.rules) {
+        break
+      }
+      let rules = field.rules
+      if (!Array.isArray(rules)) {
+        rules = [rules]
+      }
+
+      rules.forEach(rule => {
+        let params
+        [rule, params] = this._parseRule(rule)
+
+        const errors = this._validateRule(rule, field, ndValues, params)
+        if (errors !== undefined && errors !== null) {
+          promises.push(typeof errors.then === 'function'
+            ? errors
+            : Promise.resolve(errors)
+          )
+          errorFields.push(field)
+        }
+      })
+    }
+
+    return await Promise.all(promises).then(errorsList => {
+      const arrRuleErrors = []
+      for (const i in errorsList) {
+        this.helpers.pushErrors(arrRuleErrors, errorFields[i], errorsList[i])
+      }
+      return arrRuleErrors
+    })
   }
 }
 

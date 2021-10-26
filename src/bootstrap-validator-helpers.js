@@ -57,10 +57,10 @@ export class BootstrapValidatorHelpers {
 
   /**
    * エラー配列付加
-   * @param {string[]|Object[]} arrErrors エラー情報配列
+   * @param {Array<BootstrapValidatorError>} arrErrors エラー情報配列
    * @param {Object} field    フィールド情報
    * @param {string|string[]} errors 追加エラー情報
-   * @return {string[]|Object[]} array arrErrors
+   * @return {Array<BootstrapValidatorError>} エラー情報配列
    */
   static pushErrors (arrErrors, field, errors) {
     const label = field.label ? field.label : field.name
@@ -76,8 +76,8 @@ export class BootstrapValidatorHelpers {
 
   /**
    * エラーメッセージを返す
-   * @param {string[]|Object[]} arrErrors エラー情報配列
-   * @param {?string} delimiter デリミタ
+   * @param {Array<string|Object>} arrErrors エラー情報配列
+   * @param {string} [delimiter] デリミタ
    * @returns {string} エラーメッセージ
    */
   static join (arrErrors, delimiter) {
@@ -143,7 +143,7 @@ export class BootstrapValidatorHelpers {
 
   /**
    * 整数チェック
-   * @param {?string} _value 値
+   * @param {string} _value 値
    * @return {boolean} true:OK, false:NG
    */
   static isInteger (_value) {
@@ -153,9 +153,9 @@ export class BootstrapValidatorHelpers {
 
   /**
    * 年月日整合性チェック
-   * @param {?string|?number} _year  年
-   * @param {?string|?number} _month 月
-   * @param {?string|?number} _day 日
+   * @param {string|?number} [_year]  年
+   * @param {string|?number} [_month] 月
+   * @param {string|?number} [_day] 日
    * @return {boolean} true:OK, false:NG
    */
   static isDate (_year, _month, _day) {
@@ -191,7 +191,7 @@ export class BootstrapValidatorHelpers {
    * 時分整合性チェック
    * @param {string|number} _hour  時
    * @param {string|number} _minute  分
-   * @param {?string|?number} _second  秒(null=未チェック)
+   * @param {string|?number} [_second]  秒(null=未チェック)
    * @return {boolean} true:OK, false:NG
    */
   static isTime (_hour, _minute, _second) {
