@@ -3,8 +3,13 @@
 [![GitHub Super-Linter](https://github.com/tghkuma/bootstrap-validator/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/gh/tghkuma/bootstrap-validator/badge)](https://www.jsdelivr.com/package/gh/tghkuma/bootstrap-validator)
 
-このプログラムは、Bootstrap5/4形式のフォーム値のValidateを行う。  
+このプログラムは、[Bootstrap](https://getbootstrap.com/) 5/4形式のフォーム値のValidateを行う。  
 JQueryは利用しない。
+
+## Web Site
+
+* [Web Site](https://tghkuma.github.io/bootstrap-validator/)
+* [サンプル](https://tghkuma.github.io/bootstrap-validator/examples/)
 
 ## Getting Started
 
@@ -97,12 +102,12 @@ focusError|name| nameフィールドにフォーカス
 clearError|name| nameフィールドのエラークリア<br>未指定時全てクリア
 setError|name, message| nameフィールドにmessageエラーを表示
 validate|[オプションオブジェクト]| パラメータチェック<br>戻り値:true=正常, false=エラー
-validateAlert|[オプションオブジェクト]| パラメータチェック<br>エラー時alert()でエラー表示
+validateAlert|[オプションオブジェクト]| パラメータチェック<br>エラー時alert()でエラー表示<br>戻り値:true=正常, false=エラー
 getValidateResult|[オプションオブジェクト]|パラメータチェック結果取得<br>戻り値:エラーメッセージ配列
 getFieldsRules|[オプションオブジェクト]|フォーム内フィールドからfieldsとrulesを生成|
-asyncValidate|[オプションオブジェクト]| パラメータチェック(async版)<br>戻り値:true=正常, false=エラー
-asyncValidateAlert|[オプションオブジェクト]| パラメータチェック(async版)<br>エラー時alert()でエラー表示
-asyncHetValidateResult|[オプションオブジェクト]|パラメータチェック結果取得(async版)<br>戻り値:エラーメッセージ配列
+asyncValidate|[オプションオブジェクト]| パラメータチェック(async版)<br>戻り値:Promise<true=正常, false=エラー>
+asyncValidateAlert|[オプションオブジェクト]| パラメータチェック(async版)<br>エラー時alert()でエラー表示<br>戻り値:Promise<true=正常, false=エラー>
+asyncHetValidateResult|[オプションオブジェクト]|パラメータチェック結果取得(async版)<br>戻り値:Promise<エラーメッセージ配列>
 
 ### ルール
 
@@ -125,15 +130,15 @@ checkbox|<最少選択数>[,<最大選択数>]| チェックボックスの選�
 range|<最小値>,<最大値>|数値範囲
 date | _なし_ |日付
 datetime | _なし_ |日時
-time | ['hm'] |時間.<br> `hh:mm:ss` 形式チェック<br>パラメータ `hm` の時は `hh:mm` 形式チェック
+time |'hm'|時間.<br> `hh:mm:ss` 形式チェック<br>パラメータ `hm` の時は `hh:mm` 形式チェック
 zip | _なし_ |郵便番号
 date_ex | _なし_ |日付.<br>[YYYY/MM/DD] or [YYYY/MM] or [YYYY]の書式でチェックする
-regexp|<正規表現>[,<フラグ>[,<エラーメッセージ>]]| 正規表現は文字列か正規表現リテラル(/<正規表現>/)が指定可.<br><フラグ>,<エラーメッセージ>は省略可<br>正規表現リテラルの場合,第2パラメータは<メッセージ>となる
+regexp|<正規表現>[,<フラグ>[,<エラーメッセージ>]]| 正規表現は文字列か正規表現リテラル(/<正規表現>/)が指定可.<br><フラグ>,<エラーメッセージ>は省略可<br>正規表現リテラルの場合、第2パラメータは<メッセージ>となる
 <関数>|_関数による_|独自Validate関数を実行する
-zip_ex | _なし_ |(※)郵便番号.<br>nameとname+'\_after'の2か所をチェック
-ymd | ['required'] | (※)年月日.<br>name+'\_y', name+'\_m', name+'\_d'の３か所をチェック<br>パラメータ `required` の時は必須チェックも行う。
+zip_ex | _なし_ |[※](#rules_annotation)郵便番号.<br>nameとname+'\_after'の2か所をチェック
+ymd |'required'|[※](#rules_annotation)年月日.<br>name+'\_y', name+'\_m', name+'\_d'の３か所をチェック<br>パラメータ `required` の時は必須チェックも行う。
 
-(※)バリデーション機能はあるが、Bootstrapでのエラー表示ができない。  
+<a name="rules_annotation">※</a>バリデーション機能はあるが、Bootstrapでのエラー表示ができない。<br>
 Alert,独自エラー表示では対応可能。
 
 ### パラメータ書式
