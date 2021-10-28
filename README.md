@@ -3,14 +3,19 @@
 [![GitHub Super-Linter](https://github.com/tghkuma/bootstrap-validator/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/gh/tghkuma/bootstrap-validator/badge)](https://www.jsdelivr.com/package/gh/tghkuma/bootstrap-validator)
 
-このプログラムは、Bootstrap5/4形式のフォーム値のValidateを行う。  
+このプログラムは、[Bootstrap](https://getbootstrap.com/) 5/4形式のフォーム値のValidateを行う。  
 JQueryは利用しない。
+
+## Web Site
+
+* [Web Site](https://tghkuma.github.io/bootstrap-validator/)
+* [サンプル](https://tghkuma.github.io/bootstrap-validator/examples/)
 
 ## Getting Started
 
 * [Github](https://github.com/tghkuma/bootstrap-validator)
-* CDN(umd版):`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.min.js`
-* CDN(esm版):`https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.esm.min.js`
+* CDN(umd版)<br>```https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.min.js```
+* CDN(esm版)<br>```https://cdn.jsdelivr.net/gh/tghkuma/bootstrap-validator@0.8/js/bootstrap-validator.esm.min.js```
 
 ## 利用方法
 
@@ -53,7 +58,7 @@ new BootstrapValidator(<form selectors|HTMLFormElement>, { <オプション>,fie
 別のタイミングでValidateを行う場合。
 
 ```javascript
-const form = document.querySelector(<form selector>);
+const form = document.querySelector(<form selector>)
 valitetor = new BootstrapValidator(form, { submit: null, fields: <フィールド定義配列> })
             :
 valitetor.validate()
@@ -64,11 +69,15 @@ valitetor.validate()
 オプション名 | 初期値 | 機能
 --- | --- | ---
 submit |'validate' | Submit時に行う処理、メソッド文字列 or 関数 or null(何もしない)
+result |null | バリデーション後に行う処理、関数 or null(何もしない)<br>メソッド:`validate()`, `validateAlert()`, `asyncValidate()`, `asyncValidateAlert()`で利用
 confirm_suffix|'\_confirm' | confirmルールの確認フィールドの接尾語
 zip_suffix | '\_after' |zip_exルールの4桁フィールドの接尾語
-clearError | null | エラークリア関数を指定
+ymd_suffix_y | '\_y' |ymdルールの年フィールドの接尾語
+ymd_suffix_m | '\_m' |ymdルールの月フィールドの接尾語
+ymd_suffix_d | '\_d' |ymdルールの日フィールドの接尾語
 setError| null | エラー設定関数を指定
-focusError | true | true=エラー時に最初のエラーにフォーカスする<br>メソッド:validate, validateAlertで利用
+clearError | null | エラークリア関数を指定
+focusError | true | true=エラー時に最初のエラーにフォーカスする<br>メソッド:`validate()`, `validateAlert()`, `asyncValidate()`, `asyncValidateAlert()`で利用
 
 ### フィールド定義
 
@@ -93,9 +102,12 @@ focusError|name| nameフィールドにフォーカス
 clearError|name| nameフィールドのエラークリア<br>未指定時全てクリア
 setError|name, message| nameフィールドにmessageエラーを表示
 validate|[オプションオブジェクト]| パラメータチェック<br>戻り値:true=正常, false=エラー
-validateAlert|[オプションオブジェクト]| パラメータチェック<br>エラー時alert()でエラー表示
+validateAlert|[オプションオブジェクト]| パラメータチェック<br>エラー時alert()でエラー表示<br>戻り値:true=正常, false=エラー
 getValidateResult|[オプションオブジェクト]|パラメータチェック結果取得<br>戻り値:エラーメッセージ配列
 getFieldsRules|[オプションオブジェクト]|フォーム内フィールドからfieldsとrulesを生成|
+asyncValidate|[オプションオブジェクト]| パラメータチェック(async版)<br>戻り値:Promise<true=正常, false=エラー>
+asyncValidateAlert|[オプションオブジェクト]| パラメータチェック(async版)<br>エラー時alert()でエラー表示<br>戻り値:Promise<true=正常, false=エラー>
+asyncHetValidateResult|[オプションオブジェクト]|パラメータチェック結果取得(async版)<br>戻り値:Promise<エラーメッセージ配列>
 
 ### ルール
 
@@ -118,15 +130,15 @@ checkbox|<最少選択数>[,<最大選択数>]| チェックボックスの選�
 range|<最小値>,<最大値>|数値範囲
 date | _なし_ |日付
 datetime | _なし_ |日時
-time | ['hm'] |時間.<br> `hh:mm:ss` 形式チェック<br>パラメータ `hm` の時は `hh:mm` 形式チェック
+time |'hm'|時間.<br> `hh:mm:ss` 形式チェック<br>パラメータ `hm` の時は `hh:mm` 形式チェック
 zip | _なし_ |郵便番号
 date_ex | _なし_ |日付.<br>[YYYY/MM/DD] or [YYYY/MM] or [YYYY]の書式でチェックする
-regexp|<正規表現>[,<フラグ>[,<エラーメッセージ>]]| 正規表現は文字列か正規表現リテラル(/<正規表現>/)が指定可.<br><フラグ>,<エラーメッセージ>は省略可<br>正規表現リテラルの場合,第2パラメータは<メッセージ>となる
+regexp|<正規表現>[,<フラグ>[,<エラーメッセージ>]]| 正規表現は文字列か正規表現リテラル(/<正規表現>/)が指定可.<br><フラグ>,<エラーメッセージ>は省略可<br>正規表現リテラルの場合、第2パラメータは<メッセージ>となる
 <関数>|_関数による_|独自Validate関数を実行する
-zip_ex | _なし_ |(※)郵便番号.<br>nameとname+'\_after'の2か所をチェック
-ymd | ['required'] | (※)年月日.<br>name+'\_y', name+'\_m', name+'\_d'の３か所をチェック<br>パラメータ `required` の時は必須チェックも行う。
+zip_ex | _なし_ |[※](#rules_annotation)郵便番号.<br>nameとname+'\_after'の2か所をチェック
+ymd |'required'|[※](#rules_annotation)年月日.<br>name+'\_y', name+'\_m', name+'\_d'の３か所をチェック<br>パラメータ `required` の時は必須チェックも行う。
 
-(※)バリデーション機能はあるが、Bootstrapでのエラー表示ができない。  
+<a name="rules_annotation">※</a>バリデーション機能はあるが、Bootstrapでのエラー表示ができない。<br>
 Alert,独自エラー表示では対応可能。
 
 ### パラメータ書式
@@ -192,17 +204,17 @@ getValidateResultメソッドの戻り値はエラーメッセージは下記構
 
 ```javascript
 [
- { name:  '<フィールド名1>', label: '<フィールド表示名1>', message: '<エラーメッセージ>' },
+ { name: '<フィールド名1>', label: '<フィールド表示名1>', message: '<エラーメッセージ>' },
                     :
- { name:  '<フィールド名n>', label: '<フィールド表示名n>', message: '<エラーメッセージ>' }
+ { name: '<フィールド名n>', label: '<フィールド表示名n>', message: '<エラーメッセージ>' }
 ]
 ```
 1フィールドに複数ルールが定義されている等、複数のエラーが出た場合は同じフィールド名で複数のエラーメッセージを返す。
 
 ```javascript
 [
- { name:  'NAME_KANA', label: '名前(かな)', message:'全角ひらがなで入力してください.' },
- { name:  'NAME_KANA', label: '名前(かな)', message:'20文字以下で入力して下さい.' },
+ { name: 'NAME_KANA', label: '名前(かな)', message: '全角ひらがなで入力してください.' },
+ { name: 'NAME_KANA', label: '名前(かな)', message: '20文字以下で入力して下さい.' },
                     :
 ]
 ```
@@ -210,18 +222,18 @@ getValidateResultメソッドの戻り値はエラーメッセージは下記構
 ## HTML5バリデーション準拠
 
 `fields` を指定しないと、指定フォームの[HTMLFormControlsCollection](https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#htmlformcontrolscollection) と入力フォームのHTML5準拠バリデーションルールから自動生成する。  
-手動で生成する場合、`getFieldsRules` メソッドを使用する。
+手動で生成する場合、`getFieldsRules()` メソッドを使用する。
 
 対応しているバリデーションは下記の通り
 
-属性|ルール,パラメータ | 尾行
+属性|ルール,パラメータ|備考
 ---|---|---
 required|'required'|
-minlength='<最小文字数>'|['minlength',<最小文字数>]|
-maxlength='<最大文字数>'|['maxlength',<最大文字数>]|
-min='<最小値>'| ['min', <最小値>]|
-max='<最大値>'| ['max', <最大値>]|
-pattern='<正規表現>'|['regexp','<正規表現>']|
+minlength='<最小文字数\>'|['minlength',<最小文字数\>]|
+maxlength='<最大文字数\>'|['maxlength',<最大文字数\>]|
+min='<最小値\>'|['min', <最小値\>]|
+max='<最大値\>'|['max', <最大値\>]|
+pattern='<正規表現\>'|['regexp','<正規表現\>']|
 type='number'|'numeric'|
 type='email'|'email'|
 type='tel'|'tel'|
@@ -234,10 +246,10 @@ type='checkbox' required|'required'|最初のフィールドのみ指定可
 
 ### ブラウザバリデーション無効
 
-ブラウザのバリデーションも発動してしまうので、 `<form>` タグに `novalidate` 属性を付加する。
+ブラウザのバリデーションも発動してしまうので、 `<form>` タグに [novalidate](https://developer.mozilla.org/ja/docs/Web/HTML/Element/form#attr-novalidate) 属性を付加する。
 
 ```html
-    <form 〜 novalidate>
+<form 〜 novalidate>
 ```
 
 ### input[type="number"]
@@ -247,7 +259,7 @@ html5の `<input type="number" 〜>` を使用して数値以外を入力した�
 
 ブラウザ|挙動|本パッケージ対応
 ---|---|---
-Firefox/Safari/Edge|入力値は存在するが、Javascript値が空になる|ブラウザの「validity.badInput」で判定し「validationMessage」を返す
+Firefox/Safari/Edge|入力値は存在するが、Javascript値が空になる|ブラウザの[validity.badInput](https://developer.mozilla.org/ja/docs/Web/API/ValidityState/badInput) で判定し[HTMLObjectElement.validationMessage](https://developer.mozilla.org/en-US/docs/Web/API/HTMLObjectElement/validationMessage) を返す
 Chrome|そもそも入力できない|未入力扱い
 
 ### Bootstrapレイアウトでエラー表示されないルール
