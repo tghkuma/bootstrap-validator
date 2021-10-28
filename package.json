@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "eslint js/*.js",
-    "jsdoc": "jsdoc src -d jsdoc/",
+    "jsdoc": "jsdoc -r src -d jsdoc/",
     "jscpd": "jscpd ./src/**.js",
     "standard": "standard ./src/**.js",
     "standard:fix": "standard --fix ./js/bootstrap-validator.js",
