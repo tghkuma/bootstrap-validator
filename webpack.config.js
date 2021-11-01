@@ -1,13 +1,8 @@
 const path = require('path');
+
 const entry = {
-  'bootstrap-validator': [
-    './src/messages/ja.js',
-    './src/bootstrap-validator-helpers.js',
-    './src/bootstrap-validator-valid-func.js',
-    './src/bootstrap-validator-valid-exists-func.js',
-    './src/bootstrap-validator.js',
-  ],
-};
+  'bootstrap-validator': './src'
+}
 const umdConfig = {
   mode: 'development',
   entry: entry,
@@ -16,7 +11,8 @@ const umdConfig = {
     filename: `[name].js`,
     libraryTarget: 'umd',
   },
-  devtool: false,
+  // devtool: false,
+  devtool: 'source-map',
 };
 const umdMinConfig = {
   mode: 'production',
@@ -26,7 +22,7 @@ const umdMinConfig = {
     filename: `[name].min.js`,
     libraryTarget: 'umd',
   },
-  // devtool: 'source-map',
+  devtool: 'source-map',
 };
 const esmConfig = {
   mode: 'development',
@@ -41,7 +37,8 @@ const esmConfig = {
   experiments: {
     outputModule: true,
   },
-  devtool: false,
+  // devtool: false,
+  devtool: 'source-map',
 };
 const esmMinConfig = {
   mode: 'production',
@@ -56,7 +53,7 @@ const esmMinConfig = {
   experiments: {
     outputModule: true,
   },
-  // devtool: 'source-map',
+  devtool: 'source-map',
 };
 module.exports = [
   umdConfig,

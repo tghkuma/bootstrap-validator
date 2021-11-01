@@ -1,11 +1,11 @@
-import { MESSAGES } from './messages/ja.js'
-import { BootstrapValidatorHelpers } from './bootstrap-validator-helpers.js'
-import { BootstrapValidatorValidExistsFunc } from './bootstrap-validator-valid-exists-func.js'
-import { BootstrapValidatorValidFunc } from './bootstrap-validator-valid-func.js'
+import { MESSAGES } from './messages/ja'
+import { Helpers } from './helpers'
+import { ValidExistsRules } from './valid-exists-rules'
+import { ValidRules } from './valid-rules'
 
 /**
  * 設定パラメータ
- * @typedef {Object} BootstrapValidator_Settings
+ * @typedef {Object} Settings
  * @property {null|string|function} submit Submit時に行う処理
  * @property {null|function} result バリデーション後に行う処理
  * @property {string} confirm_suffix confirmルールの確認フィールドの接尾語
@@ -14,14 +14,33 @@ import { BootstrapValidatorValidFunc } from './bootstrap-validator-valid-func.js
  * @property {string} ymd_suffix_m ymdルールの月フィールドの接尾語
  * @property {string} ymd_suffix_d ymdルールの日フィールドの接尾語
  * @property {null|function} setError エラー設定関数を指定
- * @property {null|function} setError エラークリア関数を指定
+ * @property {null|function} clearError エラークリア関数を指定
  * @property {boolean} focusError true=エラー時に最初のエラーにフォーカスする
  * @property {MESSAGES} messages メッセージ情報配列
  */
 
 /**
+ * オプションパラメータ
+ * @typedef {Settings} Options
+ * @property {Field[]} [fields] フィールド配列
+ */
+
+/**
+ * field
+ * @typedef {Object} Field
+ * @property {string} name 項目名
+ * @property {string} label 項目ラベル名
+ * @property {Rule| Rule[]} rules バリデーションルール
+ */
+
+/**
+ * ルール
+ * @typedef {Object|Array<string>|string} Rule
+ */
+
+/**
  * errorパラメータ
- * @typedef {Object} BootstrapValidator_Error
+ * @typedef {Object} Error
  * @property {string} name 項目名
  * @property {string} label 項目ラベル名
  * @property {string|string[]} message エラーメッセージ
@@ -33,9 +52,8 @@ import { BootstrapValidatorValidFunc } from './bootstrap-validator-valid-func.js
 export class BootstrapValidator {
   /**
    * コンストラクタ
-   * @constructor
-   * @param {HTMLElement} form フォームNode
-   * @param {Object} [options] 設定オプション
+   * @param {HTMLElement|string} form フォームNode
+   * @param {Options} [options] 設定オプション
    */
   constructor (form, options) {
     /** フォームElement */
@@ -43,7 +61,8 @@ export class BootstrapValidator {
 
     /**
      * 初期設定情報
-     * @var {BootstrapValidator_Settings}
+     * @type {Settings}
+     * @private
      */
     this._settings = {
       submit: 'validate',
@@ -64,6 +83,7 @@ export class BootstrapValidator {
     if (options) {
       /** フィールド情報 */
       if (options.fields) {
+        /** @type Array<Field> */
         this.fields = options.fields
       }
       /** 設定マージ */
@@ -78,9 +98,9 @@ export class BootstrapValidator {
       }
     }
 
-    this.helpers = BootstrapValidatorHelpers
-    this._validFunc = BootstrapValidatorValidFunc
-    this._validExistsFunc = BootstrapValidatorValidExistsFunc
+    this.helpers = Helpers
+    this._validRules = ValidRules
+    this._validExistsRules = ValidExistsRules
 
     // submitイベント登録
     this.listenerSubmit = event => this.onSubmit(event)
@@ -142,7 +162,7 @@ export class BootstrapValidator {
 
   /**
    * 設定データ取得
-   * @return {BootstrapValidator_Settings} 設定データ
+   * @return {Settings} 設定データ
    */
   get settings () {
     return this._settings
@@ -151,7 +171,7 @@ export class BootstrapValidator {
   /**
    * 設定データ更新
    * 既存の設定とマージする
-   * @param {BootstrapValidator_Settings} settings 設定データ
+   * @param {Settings} settings 設定データ
    */
   set settings (settings) {
     this._settings = Object.assign(this._settings, settings)
@@ -294,7 +314,7 @@ export class BootstrapValidator {
 
   /**
    * バリデーション処理
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @return {boolean} true:正常
    */
   validate (options) {
@@ -304,7 +324,7 @@ export class BootstrapValidator {
 
   /**
    * バリデーション処理(async版)
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @returns {Promise<boolean>} true:正常
    */
   async asyncValidate (options) {
@@ -341,7 +361,7 @@ export class BootstrapValidator {
   /**
    * パラメータチェック
    * (エラー時アラート)
-   * @param {Object} [options] オプション
+   * @param {Options} [options] オプション
    * @returns {boolean} true:正常
    */
   validateAlert (options) {
@@ -351,7 +371,7 @@ export class BootstrapValidator {
   /**
    * パラメータチェック(async版)
    * (エラー時アラート)
-   * @param {Object} [options] オプション
+   * @param {Options} [options] オプション
    * @returns {Promise<boolean>} true:正常
    */
   async asyncValidateAlert (options) {
@@ -420,11 +440,14 @@ export class BootstrapValidator {
 
   /**
    * ルールをルールとパラメータに分解
-   * @param {Object|Array|string} rule ルール
-   * @return {Array<string, Array<string|number|*>>|null} ルール,パラメータ
-   * @private
+   * @param {Rule} rule ルール
+   * @typedef {Array} _parseRule~RuleParams
+   * @property {string} rule ルール
+   * @property {Array<string|number>} params パラメータ
+   * @return {_parseRule~RuleParams} ルール,パラメータ
    */
   _parseRule (rule) {
+    /** @type Array<string|number> */
     let params
     // ------------------
     // ルール分岐
@@ -499,20 +522,20 @@ export class BootstrapValidator {
         if (!this.helpers.existsValue(ndValues)) {
           errors = this.settings.messages.REQUIRED
         }
-      } else if (typeof this._validFunc[rule] === 'function') {
-        errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+      } else if (typeof this._validRules[rule] === 'function') {
+        errors = this._validRules[rule].apply(this, [field, ndValues, params, this])
       }
-    } else if (typeof this._validExistsFunc[rule] === 'function') {
-      errors = this._validExistsFunc[rule].apply(this, [field, ndValues, params, this])
+    } else if (typeof this._validExistsRules[rule] === 'function') {
+      errors = this._validExistsRules[rule].apply(this, [field, ndValues, params, this])
     } else if (rule === 'checkbox') {
-      errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+      errors = this._validRules[rule].apply(this, [field, ndValues, params, this])
     }
     return errors
   }
 
   /**
    * バリデーション結果取得
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @returns {boolean|string[]} エラー値
    */
   getValidateResult (options) {
@@ -542,7 +565,7 @@ export class BootstrapValidator {
 
   /**
    * バリデーション結果取得(async版)
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @returns {Promise<boolean>|Promise<string[]>} エラー値
    */
   async asyncGetValidateResult (options) {
