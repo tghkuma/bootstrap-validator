@@ -1,7 +1,7 @@
 /**
  * バリデーション関数群(値なし)
  */
-export class BootstrapValidatorValidFunc {
+export class ValidRules {
   /**
    * 数値チェック(値なし)
    * @param {object} field フィールド
@@ -10,7 +10,7 @@ export class BootstrapValidatorValidFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static numeric (field, ndValues, params, v) {
+  numeric (field, ndValues, params, v) {
     // type="number"時の仮対策
     if (ndValues && ndValues[0].validity && ndValues[0].validity.badInput) {
       return ndValues[0].validationMessage
@@ -28,7 +28,7 @@ export class BootstrapValidatorValidFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static checkbox (field, ndValues, params, v) {
+  checkbox (field, ndValues, params, v) {
     const check = v.helpers.getValue(ndValues).length
     const min = Number(params[0])
     if (params.length >= 2) {
@@ -53,7 +53,7 @@ export class BootstrapValidatorValidFunc {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  static zip_ex (field, ndValues, params, v) {
+  zip_ex (field, ndValues, params, v) {
     const zipAfter = v.querySelectorByName(field.name + v.settings.zip_suffix)
     if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
       return v.settings.messages.INSUFFICIENT
@@ -72,7 +72,7 @@ export class BootstrapValidatorValidFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string[]|null} エラーメッセージ(正常時null)
    */
-  static ymd (field, ndValues, params, v) {
+  ymd (field, ndValues, params, v) {
     // 変数宣言
     const arrErrors = []
 

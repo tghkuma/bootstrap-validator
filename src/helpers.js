@@ -1,10 +1,10 @@
 /**
  * 補助処理群
  */
-export class BootstrapValidatorHelpers {
+export class Helpers {
   /**
    * フィールドから値を取得
-   * @param {NodeList} ndValues NodeList
+   * @param {NodeList<HTMLElement>} ndValues NodeList
    * @return {string} 値
    */
   static getValue (ndValues) {
@@ -32,7 +32,7 @@ export class BootstrapValidatorHelpers {
 
   /**
    * 値が入力されているか？
-   * @param {NodeList} ndValues NodeList
+   * @param {NodeList<HTMLElement>} ndValues NodeList
    * @return {boolean} true:入力, false:未入力
    */
   static existsValue (ndValues) {
@@ -57,10 +57,10 @@ export class BootstrapValidatorHelpers {
 
   /**
    * エラー配列付加
-   * @param {Array<BootstrapValidatorError>} arrErrors エラー情報配列
+   * @param {Array<Error>} arrErrors エラー情報配列
    * @param {Object} field    フィールド情報
    * @param {string|string[]} errors 追加エラー情報
-   * @return {Array<BootstrapValidatorError>} エラー情報配列
+   * @return {Array<Error>} エラー情報配列
    */
   static pushErrors (arrErrors, field, errors) {
     const label = field.label ? field.label : field.name

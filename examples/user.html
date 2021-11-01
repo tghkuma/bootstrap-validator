@@ -51,6 +51,8 @@
       validator.clearError('radio')
       validator.clearError('checkbox')
     })
+    // ツールチップ生成
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => new bootstrap.Tooltip(el))
   })
 </script>
 <div class="container">
@@ -204,7 +206,7 @@
         <input type="submit" class="btn btn-primary" value="登録">
         <input type="reset" class="btn btn-secondary" value="リセット">
         <input id="clear-error" type="button" class="btn btn-secondary" value="エラークリア">
-        <input id="clear-error2" type="button" class="btn btn-secondary" value="エラークリア2">
+        <input id="clear-error2" type="button" class="btn btn-secondary" value="エラークリア2" data-bs-toggle="tooltip" title="名前, ラジオボタン, チェックボックスのみクリア">
       </div>
     </form>
     <a href="index.html">一覧へ</a>
