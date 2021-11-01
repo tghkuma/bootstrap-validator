@@ -35,10 +35,11 @@ esm版
 ```javascript
 <script type="module">
   'use strict'
-  import { BootstrapValidator } from '<path>/bootstrap-validator.esm.min.js'
-  :
+  import {Index} from '
+  <path>/bootstrap-validator.esm.min.js'
+    :
     const validator = new BootstrapValidator(〜)
-  :
+    :
 </script>
 ```
 
@@ -48,11 +49,12 @@ Validate定義
 Submit時にValidateを行う場合。
 
 ```javascript
-new BootstrapValidator(<form selectors|HTMLFormElement>, { <オプション>,fields:[
- { name: '<フィールド名1>'[, label: '<フィールド表示名1>'][, rules: <ルール or ルール配列>] },
-                    :
- { name:'<フィールド名n>', label: '<フィールド表示名n>', rules: <ルール or ルール配列>}
-]})
+new Index(<form selectors|HTMLFormElement >, {
+<オプション>,fields:[
+  {name: '<フィールド名1>'[, label: '<フィールド表示名1>'][, rules: <ルール or ルール配列>] },
+    :
+  {name:'<フィールド名n>', label: '<フィールド表示名n>', rules: <ルール or ルール配列>}
+    ]})
 ```
 
 別のタイミングでValidateを行う場合。
@@ -183,18 +185,18 @@ Alert,独自エラー表示では対応可能。
  * @param {NodeList} ndValues セレクタNodeList
  * @param {array} [params] ルールパラメータ
  * @param {string} params[0] エラー値
- * @param {BootstrapValidator} [v] validatorインスタンス
+ * @param {Index} [v] validatorインスタンス
  * @returns {string|null} Validate結果
  *         null:正常
  *         string:エラー
  */
 function funcValidate (field, ndValues, params, v) {
-    const val = v.helpers.getValue(ndValues)
-    if (val=='abcde')
-        return '「abcde」は使用できません.';
-    else if (params[0] && val === params[0])
-        return '「'+params[0]+'」は使用できません.';
-    return null;
+  const val = v.helpers.getValue(ndValues)
+  if (val == 'abcde')
+    return '「abcde」は使用できません.';
+  else if (params[0] && val === params[0])
+    return '「' + params[0] + '」は使用できません.';
+  return null;
 }
 ```
 

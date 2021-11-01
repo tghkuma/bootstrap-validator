@@ -12,23 +12,23 @@ return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/bootstrap-validator-helpers.js":
-/*!********************************************!*\
-  !*** ./src/bootstrap-validator-helpers.js ***!
-  \********************************************/
+/***/ "./src/helpers.js":
+/*!************************!*\
+  !*** ./src/helpers.js ***!
+  \************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BootstrapValidatorHelpers": () => (/* binding */ BootstrapValidatorHelpers)
+/* harmony export */   "Helpers": () => (/* binding */ Helpers)
 /* harmony export */ });
 /**
  * 補助処理群
  */
-class BootstrapValidatorHelpers {
+class Helpers {
   /**
    * フィールドから値を取得
-   * @param {NodeList} ndValues NodeList
+   * @param {NodeList<HTMLElement>} ndValues NodeList
    * @return {string} 値
    */
   static getValue (ndValues) {
@@ -56,7 +56,7 @@ class BootstrapValidatorHelpers {
 
   /**
    * 値が入力されているか？
-   * @param {NodeList} ndValues NodeList
+   * @param {NodeList<HTMLElement>} ndValues NodeList
    * @return {boolean} true:入力, false:未入力
    */
   static existsValue (ndValues) {
@@ -81,10 +81,10 @@ class BootstrapValidatorHelpers {
 
   /**
    * エラー配列付加
-   * @param {Array<BootstrapValidatorError>} arrErrors エラー情報配列
+   * @param {Array<Error>} arrErrors エラー情報配列
    * @param {Object} field    フィールド情報
    * @param {string|string[]} errors 追加エラー情報
-   * @return {Array<BootstrapValidatorError>} エラー情報配列
+   * @return {Array<Error>} エラー情報配列
    */
   static pushErrors (arrErrors, field, errors) {
     const label = field.label ? field.label : field.name
@@ -318,20 +318,88 @@ class BootstrapValidatorHelpers {
 
 /***/ }),
 
-/***/ "./src/bootstrap-validator-valid-exists-func.js":
-/*!******************************************************!*\
-  !*** ./src/bootstrap-validator-valid-exists-func.js ***!
-  \******************************************************/
+/***/ "./src/messages/ja.js":
+/*!****************************!*\
+  !*** ./src/messages/ja.js ***!
+  \****************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BootstrapValidatorValidExistsFunc": () => (/* binding */ BootstrapValidatorValidExistsFunc)
+/* harmony export */   "MESSAGES": () => (/* binding */ MESSAGES)
+/* harmony export */ });
+/**
+ * メッセージ定義
+ * @type {{ZIP: string, MAIL_INVALID_DOMAIN: string, REGEXP_INVALID_PARAM: string, INTEGER_PART: string, MAX: string, DATE_PART_Y: string, INSUFFICIENT: string, DATE_PART_M: string, NUMERICAL_VALUE: string, CHECKBOX_RANGE: string, TIME_HM: string, NOT_EXISTS_FIELD: string, TIME_INVALID: string, DATE_PART_D: string, REGEXP_INVALID_VALUE: string, MIN_LENGTH: string, MAIL_INVALID_IP: string, CONFIRM: string, CHECKBOX_MIN: string, MAIL_INVALID_LOCALE: string, ZENKAKU: string, INTEGER: string, VALIDATE_ERROR: string, HIRAGANA: string, CONFIRM_FIELD: string, REQUIRED_PART: string, REQUIRED: string, ZEN_KANA: string, TIME: string, HANKAKU: string, MAX_LENGTH: string, MAIL_NO_DOMAIN: string, DATE: string, DATE_INVALID: string, MIN: string, DATETIME: string, DATE_EX: string, TEL: string, MAIL_NO_AT: string, NUM_LENGTH: string, INSUFFICIENT_PART: string, RANGE: string}}
+ */
+const MESSAGES = {
+  VALIDATE_ERROR: '入力に誤りがあります.',
+  // Required
+  REQUIRED: '必須項目です.',
+  REQUIRED_PART: '{0} は必須項目です.',
+  INSUFFICIENT: '不足しています.',
+  INSUFFICIENT_PART: '{0} が不足しています.',
+  CONFIRM: '確認{0}と異なっています.',
+  CONFIRM_FIELD: '項目',
+  // input a numerical value
+  NUMERICAL_VALUE: '数値を入力して下さい.',
+  INTEGER: '整数値を入力して下さい.',
+  INTEGER_PART: '{0} は整数値を入力して下さい.',
+  MIN: '{0} ～ の数値を入力してください.',
+  MAX: '～ {0} の数値を入力してください.',
+  RANGE: '{0} ～ {1} の数値を入力してください.',
+  MIN_LENGTH: '{0}文字以上で入力して下さい.',
+  MAX_LENGTH: '{0}文字以下で入力して下さい.',
+  NUM_LENGTH: '{0}桁の数値を入力してください.',
+  CHECKBOX_MIN: '{0} 個チェックしてください.',
+  CHECKBOX_RANGE: '{0}～{1} 個の間でチェックしてください.',
+  ZENKAKU: '全角で入力してください.',
+  HANKAKU: '半角で入力してください.',
+  ZEN_KANA: '全角カタカナで入力してください.',
+  HIRAGANA: 'ひらがなで入力してください.',
+  TEL: '数値-()で入力してください.',
+  ZIP: '[nnn-nnnn]書式で記述してください.',
+  // 日付系
+  DATE: '[YYYY/MM/DD]書式で記述してください.',
+  DATE_EX: '[YYYY/MM/DD] or [YYYY/MM] or [YYYY]書式で記述してください.',
+  DATETIME: '[YYYY/MM/DD hh:mm:ss]書式で記述してください.',
+  TIME: '[hh:mm:ss]書式で記述してください.',
+  TIME_HM: '[hh:mm:ss]書式で記述してください.',
+  DATE_INVALID: '日付が間違っています.',
+  TIME_INVALID: '時間が間違っています.',
+  DATE_PART_Y: '(年)',
+  DATE_PART_M: '(月)',
+  DATE_PART_D: '(日)',
+  // 正規表現系
+  REGEXP_INVALID_PARAM: '正規表現が間違っています.',
+  REGEXP_INVALID_VALUE: '書式が間違っています.',
+  // メール系
+  MAIL_NO_AT: '正しくありません(@).',
+  MAIL_INVALID_IP: '正しくありません(IP).',
+  MAIL_NO_DOMAIN: 'ドメイン名がありません(DOMAIN).',
+  MAIL_INVALID_LOCALE: '正しくありません(LOCALE).',
+  MAIL_INVALID_DOMAIN: 'ドメイン名の書式が誤っています.',
+  // その他
+  NOT_EXISTS_FIELD: 'フィールド名[{0}]が存在しません.'
+}
+
+
+/***/ }),
+
+/***/ "./src/valid-exists-rules.js":
+/*!***********************************!*\
+  !*** ./src/valid-exists-rules.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ValidExistsRules": () => (/* binding */ ValidExistsRules)
 /* harmony export */ });
 /**
  * バリデーション関数群(値あり)
  */
-class BootstrapValidatorValidExistsFunc {
+class ValidExistsRules {
   /**
    * 確認項目
    * @param {object} field フィールド
@@ -340,7 +408,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static confirm (field, ndValues, params, v) {
+  confirm (field, ndValues, params, v) {
     const ndConfirmValues = v.querySelectorByName(field.name + v.settings.confirm_suffix)
     if (!ndValues || (!ndConfirmValues || ndConfirmValues.length === 0) ||
       v.helpers.getValue(ndValues) !== v.helpers.getValue(ndConfirmValues)) {
@@ -359,7 +427,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static email (field, ndValues, params, v) {
+  email (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (val) {
       const errorEmail = v.helpers.isEmailEx.apply(v, [val])
@@ -378,7 +446,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static zenkaku (field, ndValues, params, v) {
+  zenkaku (field, ndValues, params, v) {
     if (!v.helpers.isZenkaku(v.helpers.getValue(ndValues))) {
       return v.settings.messages.ZENKAKU
     }
@@ -393,7 +461,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static hankaku (field, ndValues, params, v) {
+  hankaku (field, ndValues, params, v) {
     if (!v.helpers.isHankaku(v.helpers.getValue(ndValues))) {
       return v.settings.messages.HANKAKU
     }
@@ -409,7 +477,7 @@ class BootstrapValidatorValidExistsFunc {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  static zen_katakana (field, ndValues, params, v) {
+  zen_katakana (field, ndValues, params, v) {
     if (!v.helpers.isAllKana(v.helpers.getValue(ndValues))) {
       return v.settings.messages.ZEN_KANA
     }
@@ -424,7 +492,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static hiragana (field, ndValues, params, v) {
+  hiragana (field, ndValues, params, v) {
     if (!v.helpers.isAllHiragana(v.helpers.getValue(ndValues))) {
       return v.settings.messages.HIRAGANA
     }
@@ -439,7 +507,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static tel (field, ndValues, params, v) {
+  tel (field, ndValues, params, v) {
     if (!v.helpers.isTel(v.helpers.getValue(ndValues))) {
       return v.settings.messages.TEL
     }
@@ -454,7 +522,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static numeric (field, ndValues, params, v) {
+  numeric (field, ndValues, params, v) {
     // type="text"の時
     const val = v.helpers.getValue(ndValues)
     if (!isFinite(val) || val.indexOf(' ') !== -1 || val.indexOf('0x') !== -1) {
@@ -472,7 +540,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static minlength (field, ndValues, params, v) {
+  minlength (field, ndValues, params, v) {
     const min = Number(params[0])
     if (v.helpers.getValue(ndValues).length < min) { return v.helpers.format(v.settings.messages.MIN_LENGTH, min) }
     return null
@@ -487,7 +555,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static maxlength (field, ndValues, params, v) {
+  maxlength (field, ndValues, params, v) {
     const max = Number(params[0])
     if (max < v.helpers.getValue(ndValues).length) { return v.helpers.format(v.settings.messages.MAX_LENGTH, max) }
     return null
@@ -503,7 +571,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static numlength (field, ndValues, params, v) {
+  numlength (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     let tmpReg = params[0]
     let tmpErrorMessage = params[0]
@@ -527,7 +595,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static min (field, ndValues, params, v) {
+  min (field, ndValues, params, v) {
     /* jscpd:ignore-start */
     const val = v.helpers.getValue(ndValues)
     if (!v.helpers.isInteger(val)) {
@@ -548,7 +616,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static max (field, ndValues, params, v) {
+  max (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (!v.helpers.isInteger(val)) {
       return v.settings.messages.INTEGER
@@ -568,7 +636,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static range (field, ndValues, params, v) {
+  range (field, ndValues, params, v) {
     /* jscpd:ignore-start */
     const val = v.helpers.getValue(ndValues)
     if (!v.helpers.isInteger(val)) {
@@ -589,7 +657,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static date (field, ndValues, params, v) {
+  date (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     // 1980/1/2
     //      ↓
@@ -613,7 +681,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static datetime (field, ndValues, params, v) {
+  datetime (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     // 1980/1/2 24:12:11
     //      ↓
@@ -641,7 +709,7 @@ class BootstrapValidatorValidExistsFunc {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  static date_ex (field, ndValues, params, v) {
+  date_ex (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     // 1980/1/2
     //      ↓
@@ -669,7 +737,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static time (field, ndValues, params, v) {
+  time (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (params[0] === 'hm') {
       if (!val.match(/^(\d{1,2}):(\d{1,2})$/g)) {
@@ -697,7 +765,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static zip (field, ndValues, params, v) {
+  zip (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (!val.match(/^\d{1,3}-\d{1,4}$/g)) {
       return v.settings.messages.ZIP
@@ -716,7 +784,7 @@ class BootstrapValidatorValidExistsFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static regexp (field, ndValues, params, v) {
+  regexp (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     let reg, errorMessage
     if (!Array.isArray(params)) {
@@ -741,20 +809,20 @@ class BootstrapValidatorValidExistsFunc {
 
 /***/ }),
 
-/***/ "./src/bootstrap-validator-valid-func.js":
-/*!***********************************************!*\
-  !*** ./src/bootstrap-validator-valid-func.js ***!
-  \***********************************************/
+/***/ "./src/valid-rules.js":
+/*!****************************!*\
+  !*** ./src/valid-rules.js ***!
+  \****************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BootstrapValidatorValidFunc": () => (/* binding */ BootstrapValidatorValidFunc)
+/* harmony export */   "ValidRules": () => (/* binding */ ValidRules)
 /* harmony export */ });
 /**
  * バリデーション関数群(値なし)
  */
-class BootstrapValidatorValidFunc {
+class ValidRules {
   /**
    * 数値チェック(値なし)
    * @param {object} field フィールド
@@ -763,7 +831,7 @@ class BootstrapValidatorValidFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static numeric (field, ndValues, params, v) {
+  numeric (field, ndValues, params, v) {
     // type="number"時の仮対策
     if (ndValues && ndValues[0].validity && ndValues[0].validity.badInput) {
       return ndValues[0].validationMessage
@@ -781,7 +849,7 @@ class BootstrapValidatorValidFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  static checkbox (field, ndValues, params, v) {
+  checkbox (field, ndValues, params, v) {
     const check = v.helpers.getValue(ndValues).length
     const min = Number(params[0])
     if (params.length >= 2) {
@@ -806,7 +874,7 @@ class BootstrapValidatorValidFunc {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  static zip_ex (field, ndValues, params, v) {
+  zip_ex (field, ndValues, params, v) {
     const zipAfter = v.querySelectorByName(field.name + v.settings.zip_suffix)
     if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
       return v.settings.messages.INSUFFICIENT
@@ -825,7 +893,7 @@ class BootstrapValidatorValidFunc {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string[]|null} エラーメッセージ(正常時null)
    */
-  static ymd (field, ndValues, params, v) {
+  ymd (field, ndValues, params, v) {
     // 変数宣言
     const arrErrors = []
 
@@ -900,22 +968,78 @@ class BootstrapValidatorValidFunc {
 }
 
 
-/***/ }),
+/***/ })
 
-/***/ "./src/bootstrap-validator.js":
-/*!************************************!*\
-  !*** ./src/bootstrap-validator.js ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "BootstrapValidator": () => (/* binding */ BootstrapValidator)
 /* harmony export */ });
-/* harmony import */ var _messages_ja_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/ja.js */ "./src/messages/ja.js");
-/* harmony import */ var _bootstrap_validator_helpers_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bootstrap-validator-helpers.js */ "./src/bootstrap-validator-helpers.js");
-/* harmony import */ var _bootstrap_validator_valid_exists_func_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bootstrap-validator-valid-exists-func.js */ "./src/bootstrap-validator-valid-exists-func.js");
-/* harmony import */ var _bootstrap_validator_valid_func_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./bootstrap-validator-valid-func.js */ "./src/bootstrap-validator-valid-func.js");
+/* harmony import */ var _messages_ja__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages/ja */ "./src/messages/ja.js");
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helpers */ "./src/helpers.js");
+/* harmony import */ var _valid_exists_rules__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./valid-exists-rules */ "./src/valid-exists-rules.js");
+/* harmony import */ var _valid_rules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./valid-rules */ "./src/valid-rules.js");
 
 
 
@@ -932,14 +1056,33 @@ __webpack_require__.r(__webpack_exports__);
  * @property {string} ymd_suffix_m ymdルールの月フィールドの接尾語
  * @property {string} ymd_suffix_d ymdルールの日フィールドの接尾語
  * @property {null|function} setError エラー設定関数を指定
- * @property {null|function} setError エラークリア関数を指定
+ * @property {null|function} clearError エラークリア関数を指定
  * @property {boolean} focusError true=エラー時に最初のエラーにフォーカスする
  * @property {MESSAGES} messages メッセージ情報配列
  */
 
 /**
+ * オプションパラメータ
+ * @typedef {Settings} Options
+ * @property {Field[]} [fields] フィールド配列
+ */
+
+/**
+ * field
+ * @typedef {Object} Field
+ * @property {string} name 項目名
+ * @property {string} label 項目ラベル名
+ * @property {Rule| Rule[]} rules バリデーションルール
+ */
+
+/**
+ * ルール
+ * @typedef {Object|Array<string>|string} Rule
+ */
+
+/**
  * errorパラメータ
- * @typedef {Object} BootstrapValidatorError
+ * @typedef {Object} Error
  * @property {string} name 項目名
  * @property {string} label 項目ラベル名
  * @property {string|string[]} message エラーメッセージ
@@ -951,9 +1094,8 @@ __webpack_require__.r(__webpack_exports__);
 class BootstrapValidator {
   /**
    * コンストラクタ
-   * @constructor
-   * @param {HTMLElement} form フォームNode
-   * @param {Object} [options] 設定オプション
+   * @param {HTMLElement|string} form フォームNode
+   * @param {Options} [options] 設定オプション
    */
   constructor (form, options) {
     /** フォームElement */
@@ -961,7 +1103,8 @@ class BootstrapValidator {
 
     /**
      * 初期設定情報
-     * @var {Settings}
+     * @type {Settings}
+     * @private
      */
     this._settings = {
       submit: 'validate',
@@ -975,13 +1118,14 @@ class BootstrapValidator {
       clearError: null,
       focusError: false,
       /** メッセージ */
-      messages: _messages_ja_js__WEBPACK_IMPORTED_MODULE_0__.MESSAGES
+      messages: _messages_ja__WEBPACK_IMPORTED_MODULE_0__.MESSAGES
     }
 
     /** option */
     if (options) {
       /** フィールド情報 */
       if (options.fields) {
+        /** @type Array<Field> */
         this.fields = options.fields
       }
       /** 設定マージ */
@@ -996,9 +1140,9 @@ class BootstrapValidator {
       }
     }
 
-    this.helpers = _bootstrap_validator_helpers_js__WEBPACK_IMPORTED_MODULE_1__.BootstrapValidatorHelpers
-    this._validFunc = _bootstrap_validator_valid_func_js__WEBPACK_IMPORTED_MODULE_3__.BootstrapValidatorValidFunc
-    this._validExistsFunc = _bootstrap_validator_valid_exists_func_js__WEBPACK_IMPORTED_MODULE_2__.BootstrapValidatorValidExistsFunc
+    this.helpers = _helpers__WEBPACK_IMPORTED_MODULE_1__.Helpers
+    this._validRules = _valid_rules__WEBPACK_IMPORTED_MODULE_3__.ValidRules
+    this._validExistsRules = _valid_exists_rules__WEBPACK_IMPORTED_MODULE_2__.ValidExistsRules
 
     // submitイベント登録
     this.listenerSubmit = event => this.onSubmit(event)
@@ -1212,7 +1356,7 @@ class BootstrapValidator {
 
   /**
    * バリデーション処理
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @return {boolean} true:正常
    */
   validate (options) {
@@ -1222,7 +1366,7 @@ class BootstrapValidator {
 
   /**
    * バリデーション処理(async版)
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @returns {Promise<boolean>} true:正常
    */
   async asyncValidate (options) {
@@ -1259,7 +1403,7 @@ class BootstrapValidator {
   /**
    * パラメータチェック
    * (エラー時アラート)
-   * @param {Object} [options] オプション
+   * @param {Options} [options] オプション
    * @returns {boolean} true:正常
    */
   validateAlert (options) {
@@ -1269,7 +1413,7 @@ class BootstrapValidator {
   /**
    * パラメータチェック(async版)
    * (エラー時アラート)
-   * @param {Object} [options] オプション
+   * @param {Options} [options] オプション
    * @returns {Promise<boolean>} true:正常
    */
   async asyncValidateAlert (options) {
@@ -1338,11 +1482,14 @@ class BootstrapValidator {
 
   /**
    * ルールをルールとパラメータに分解
-   * @param {Object|Array|string} rule ルール
-   * @return {(Object|Array|string|*[])[]} ルール,パラメータ
-   * @private
+   * @param {Rule} rule ルール
+   * @typedef {Array} _parseRule~RuleParams
+   * @property {string} rule ルール
+   * @property {Array<string|number>} params パラメータ
+   * @return {_parseRule~RuleParams} ルール,パラメータ
    */
   _parseRule (rule) {
+    /** @type Array<string|number> */
     let params
     // ------------------
     // ルール分岐
@@ -1417,20 +1564,20 @@ class BootstrapValidator {
         if (!this.helpers.existsValue(ndValues)) {
           errors = this.settings.messages.REQUIRED
         }
-      } else if (typeof this._validFunc[rule] === 'function') {
-        errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+      } else if (typeof this._validRules[rule] === 'function') {
+        errors = this._validRules[rule].apply(this, [field, ndValues, params, this])
       }
-    } else if (typeof this._validExistsFunc[rule] === 'function') {
-      errors = this._validExistsFunc[rule].apply(this, [field, ndValues, params, this])
+    } else if (typeof this._validExistsRules[rule] === 'function') {
+      errors = this._validExistsRules[rule].apply(this, [field, ndValues, params, this])
     } else if (rule === 'checkbox') {
-      errors = this._validFunc[rule].apply(this, [field, ndValues, params, this])
+      errors = this._validRules[rule].apply(this, [field, ndValues, params, this])
     }
     return errors
   }
 
   /**
    * バリデーション結果取得
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @returns {boolean|string[]} エラー値
    */
   getValidateResult (options) {
@@ -1460,7 +1607,7 @@ class BootstrapValidator {
 
   /**
    * バリデーション結果取得(async版)
-   * @param {Object} [options] オプションフィールド情報
+   * @param {Options} [options] オプションフィールド情報
    * @returns {Promise<boolean>|Promise<string[]>} エラー値
    */
   async asyncGetValidateResult (options) {
@@ -1502,144 +1649,10 @@ class BootstrapValidator {
   }
 }
 
+})();
 
-/***/ }),
-
-/***/ "./src/messages/ja.js":
-/*!****************************!*\
-  !*** ./src/messages/ja.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "MESSAGES": () => (/* binding */ MESSAGES)
-/* harmony export */ });
-/**
- * メッセージ定義
- * @type {{ZIP: string, MAIL_INVALID_DOMAIN: string, REGEXP_INVALID_PARAM: string, INTEGER_PART: string, MAX: string, DATE_PART_Y: string, INSUFFICIENT: string, DATE_PART_M: string, NUMERICAL_VALUE: string, CHECKBOX_RANGE: string, TIME_HM: string, NOT_EXISTS_FIELD: string, TIME_INVALID: string, DATE_PART_D: string, REGEXP_INVALID_VALUE: string, MIN_LENGTH: string, MAIL_INVALID_IP: string, CONFIRM: string, CHECKBOX_MIN: string, MAIL_INVALID_LOCALE: string, ZENKAKU: string, INTEGER: string, VALIDATE_ERROR: string, HIRAGANA: string, CONFIRM_FIELD: string, REQUIRED_PART: string, REQUIRED: string, ZEN_KANA: string, TIME: string, HANKAKU: string, MAX_LENGTH: string, MAIL_NO_DOMAIN: string, DATE: string, DATE_INVALID: string, MIN: string, DATETIME: string, DATE_EX: string, TEL: string, MAIL_NO_AT: string, NUM_LENGTH: string, INSUFFICIENT_PART: string, RANGE: string}}
- */
-const MESSAGES = {
-  VALIDATE_ERROR: '入力に誤りがあります.',
-  // Required
-  REQUIRED: '必須項目です.',
-  REQUIRED_PART: '{0} は必須項目です.',
-  INSUFFICIENT: '不足しています.',
-  INSUFFICIENT_PART: '{0} が不足しています.',
-  CONFIRM: '確認{0}と異なっています.',
-  CONFIRM_FIELD: '項目',
-  // input a numerical value
-  NUMERICAL_VALUE: '数値を入力して下さい.',
-  INTEGER: '整数値を入力して下さい.',
-  INTEGER_PART: '{0} は整数値を入力して下さい.',
-  MIN: '{0} ～ の数値を入力してください.',
-  MAX: '～ {0} の数値を入力してください.',
-  RANGE: '{0} ～ {1} の数値を入力してください.',
-  MIN_LENGTH: '{0}文字以上で入力して下さい.',
-  MAX_LENGTH: '{0}文字以下で入力して下さい.',
-  NUM_LENGTH: '{0}桁の数値を入力してください.',
-  CHECKBOX_MIN: '{0} 個チェックしてください.',
-  CHECKBOX_RANGE: '{0}～{1} 個の間でチェックしてください.',
-  ZENKAKU: '全角で入力してください.',
-  HANKAKU: '半角で入力してください.',
-  ZEN_KANA: '全角カタカナで入力してください.',
-  HIRAGANA: 'ひらがなで入力してください.',
-  TEL: '数値-()で入力してください.',
-  ZIP: '[nnn-nnnn]書式で記述してください.',
-  // 日付系
-  DATE: '[YYYY/MM/DD]書式で記述してください.',
-  DATE_EX: '[YYYY/MM/DD] or [YYYY/MM] or [YYYY]書式で記述してください.',
-  DATETIME: '[YYYY/MM/DD hh:mm:ss]書式で記述してください.',
-  TIME: '[hh:mm:ss]書式で記述してください.',
-  TIME_HM: '[hh:mm:ss]書式で記述してください.',
-  DATE_INVALID: '日付が間違っています.',
-  TIME_INVALID: '時間が間違っています.',
-  DATE_PART_Y: '(年)',
-  DATE_PART_M: '(月)',
-  DATE_PART_D: '(日)',
-  // 正規表現系
-  REGEXP_INVALID_PARAM: '正規表現が間違っています.',
-  REGEXP_INVALID_VALUE: '書式が間違っています.',
-  // メール系
-  MAIL_NO_AT: '正しくありません(@).',
-  MAIL_INVALID_IP: '正しくありません(IP).',
-  MAIL_NO_DOMAIN: 'ドメイン名がありません(DOMAIN).',
-  MAIL_INVALID_LOCALE: '正しくありません(LOCALE).',
-  MAIL_INVALID_DOMAIN: 'ドメイン名の書式が誤っています.',
-  // その他
-  NOT_EXISTS_FIELD: 'フィールド名[{0}]が存在しません.'
-}
-
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	__webpack_require__("./src/messages/ja.js");
-/******/ 	__webpack_require__("./src/bootstrap-validator-helpers.js");
-/******/ 	__webpack_require__("./src/bootstrap-validator-valid-func.js");
-/******/ 	__webpack_require__("./src/bootstrap-validator-valid-exists-func.js");
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/bootstrap-validator.js");
-/******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;
 });
+//# sourceMappingURL=bootstrap-validator.js.map
