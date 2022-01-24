@@ -10,7 +10,7 @@ export class ValidRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  numeric (field, ndValues, params, v) {
+  static numeric (field, ndValues, params, v) {
     // type="number"時の仮対策
     if (ndValues && ndValues[0].validity && ndValues[0].validity.badInput) {
       return ndValues[0].validationMessage
@@ -28,7 +28,7 @@ export class ValidRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  checkbox (field, ndValues, params, v) {
+  static checkbox (field, ndValues, params, v) {
     const check = v.helpers.getValue(ndValues).length
     const min = Number(params[0])
     if (params.length >= 2) {
@@ -53,7 +53,7 @@ export class ValidRules {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  zip_ex (field, ndValues, params, v) {
+  static zip_ex (field, ndValues, params, v) {
     const zipAfter = v.querySelectorByName(field.name + v.settings.zip_suffix)
     if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
       return v.settings.messages.INSUFFICIENT
@@ -72,7 +72,7 @@ export class ValidRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string[]|null} エラーメッセージ(正常時null)
    */
-  ymd (field, ndValues, params, v) {
+  static ymd (field, ndValues, params, v) {
     // 変数宣言
     const arrErrors = []
 
