@@ -408,7 +408,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  confirm (field, ndValues, params, v) {
+  static confirm (field, ndValues, params, v) {
     const ndConfirmValues = v.querySelectorByName(field.name + v.settings.confirm_suffix)
     if (!ndValues || (!ndConfirmValues || ndConfirmValues.length === 0) ||
       v.helpers.getValue(ndValues) !== v.helpers.getValue(ndConfirmValues)) {
@@ -427,7 +427,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  email (field, ndValues, params, v) {
+  static email (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (val) {
       const errorEmail = v.helpers.isEmailEx.apply(v, [val])
@@ -446,7 +446,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  zenkaku (field, ndValues, params, v) {
+  static zenkaku (field, ndValues, params, v) {
     if (!v.helpers.isZenkaku(v.helpers.getValue(ndValues))) {
       return v.settings.messages.ZENKAKU
     }
@@ -461,7 +461,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  hankaku (field, ndValues, params, v) {
+  static hankaku (field, ndValues, params, v) {
     if (!v.helpers.isHankaku(v.helpers.getValue(ndValues))) {
       return v.settings.messages.HANKAKU
     }
@@ -477,7 +477,7 @@ class ValidExistsRules {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  zen_katakana (field, ndValues, params, v) {
+  static zen_katakana (field, ndValues, params, v) {
     if (!v.helpers.isAllKana(v.helpers.getValue(ndValues))) {
       return v.settings.messages.ZEN_KANA
     }
@@ -492,7 +492,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  hiragana (field, ndValues, params, v) {
+  static hiragana (field, ndValues, params, v) {
     if (!v.helpers.isAllHiragana(v.helpers.getValue(ndValues))) {
       return v.settings.messages.HIRAGANA
     }
@@ -507,7 +507,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  tel (field, ndValues, params, v) {
+  static tel (field, ndValues, params, v) {
     if (!v.helpers.isTel(v.helpers.getValue(ndValues))) {
       return v.settings.messages.TEL
     }
@@ -522,7 +522,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  numeric (field, ndValues, params, v) {
+  static numeric (field, ndValues, params, v) {
     // type="text"の時
     const val = v.helpers.getValue(ndValues)
     if (!isFinite(val) || val.indexOf(' ') !== -1 || val.indexOf('0x') !== -1) {
@@ -540,7 +540,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  minlength (field, ndValues, params, v) {
+  static minlength (field, ndValues, params, v) {
     const min = Number(params[0])
     if (v.helpers.getValue(ndValues).length < min) { return v.helpers.format(v.settings.messages.MIN_LENGTH, min) }
     return null
@@ -555,7 +555,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  maxlength (field, ndValues, params, v) {
+  static maxlength (field, ndValues, params, v) {
     const max = Number(params[0])
     if (max < v.helpers.getValue(ndValues).length) { return v.helpers.format(v.settings.messages.MAX_LENGTH, max) }
     return null
@@ -571,7 +571,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  numlength (field, ndValues, params, v) {
+  static numlength (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     let tmpReg = params[0]
     let tmpErrorMessage = params[0]
@@ -595,7 +595,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  min (field, ndValues, params, v) {
+  static min (field, ndValues, params, v) {
     /* jscpd:ignore-start */
     const val = v.helpers.getValue(ndValues)
     if (!v.helpers.isInteger(val)) {
@@ -616,7 +616,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  max (field, ndValues, params, v) {
+  static max (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (!v.helpers.isInteger(val)) {
       return v.settings.messages.INTEGER
@@ -636,7 +636,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  range (field, ndValues, params, v) {
+  static range (field, ndValues, params, v) {
     /* jscpd:ignore-start */
     const val = v.helpers.getValue(ndValues)
     if (!v.helpers.isInteger(val)) {
@@ -657,7 +657,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  date (field, ndValues, params, v) {
+  static date (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     // 1980/1/2
     //      ↓
@@ -681,7 +681,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  datetime (field, ndValues, params, v) {
+  static datetime (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     // 1980/1/2 24:12:11
     //      ↓
@@ -709,7 +709,7 @@ class ValidExistsRules {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  date_ex (field, ndValues, params, v) {
+  static date_ex (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     // 1980/1/2
     //      ↓
@@ -737,7 +737,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  time (field, ndValues, params, v) {
+  static time (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (params[0] === 'hm') {
       if (!val.match(/^(\d{1,2}):(\d{1,2})$/g)) {
@@ -765,7 +765,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  zip (field, ndValues, params, v) {
+  static zip (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     if (!val.match(/^\d{1,3}-\d{1,4}$/g)) {
       return v.settings.messages.ZIP
@@ -784,7 +784,7 @@ class ValidExistsRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  regexp (field, ndValues, params, v) {
+  static regexp (field, ndValues, params, v) {
     const val = v.helpers.getValue(ndValues)
     let reg, errorMessage
     if (!Array.isArray(params)) {
@@ -831,7 +831,7 @@ class ValidRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  numeric (field, ndValues, params, v) {
+  static numeric (field, ndValues, params, v) {
     // type="number"時の仮対策
     if (ndValues && ndValues[0].validity && ndValues[0].validity.badInput) {
       return ndValues[0].validationMessage
@@ -849,7 +849,7 @@ class ValidRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string|null} エラーメッセージ(正常時null)
    */
-  checkbox (field, ndValues, params, v) {
+  static checkbox (field, ndValues, params, v) {
     const check = v.helpers.getValue(ndValues).length
     const min = Number(params[0])
     if (params.length >= 2) {
@@ -874,7 +874,7 @@ class ValidRules {
    * @returns {string|null} エラーメッセージ(正常時null)
    */
   // eslint-disable-next-line camelcase
-  zip_ex (field, ndValues, params, v) {
+  static zip_ex (field, ndValues, params, v) {
     const zipAfter = v.querySelectorByName(field.name + v.settings.zip_suffix)
     if (!v.helpers.existsValue(ndValues) && v.helpers.existsValue(zipAfter)) {
       return v.settings.messages.INSUFFICIENT
@@ -893,7 +893,7 @@ class ValidRules {
    * @param {BootstrapValidator} [v] validatorインスタンス
    * @returns {string[]|null} エラーメッセージ(正常時null)
    */
-  ymd (field, ndValues, params, v) {
+  static ymd (field, ndValues, params, v) {
     // 変数宣言
     const arrErrors = []
 
