@@ -1,6 +1,6 @@
 {
   "name": "bootstrap-validator",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "Bootstrap形式のフォーム値のValidateを行う。",
   "keywords": [
     "Bootstrap",
@@ -14,6 +14,7 @@
       "import": "./src/index.js"
     }
   },
+  "files": ["js"],
   "private": true,
   "directories": {
     "example": "examples"
