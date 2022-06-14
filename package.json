@@ -1,6 +1,6 @@
 {
   "name": "bootstrap-validator",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "Bootstrap形式のフォーム値のValidateを行う。",
   "keywords": [
     "Bootstrap",
@@ -9,11 +9,7 @@
   ],
   "main": "js/bootstrap-validator.js",
   "module": "js/bootstrap-validator.esm.js",
-  "exports": {
-    ".": {
-      "import": "./src/index.js"
-    }
-  },
+  "exports": "./js/bootstrap-validator.js",
   "files": ["js"],
   "private": true,
   "directories": {
